@@ -1,0 +1,1 @@
+$ runhaskel <file.hs>
