@@ -24,23 +24,20 @@
 --Find the thirteen adjacent digits in the 1000-digit number that have the greatest product. What is the value of this product?
 
 
-
+-- returns list of digits of the given number
 digits :: (Integral a) => a -> [a]
 digits 0 = []
 digits n = (mod n 10) : digits (quot n 10)
 
 
-
-
-ddd :: (Integral a) => a -> a -> a
-ddd numb acc = if numb < 10000000000000 then  acc else (
---ddd numb acc = if numb < 10000 then  acc else (
+product' :: (Integral a) => a -> a -> a
+product' numb  acc = if numb < 10000000000000 then  acc else (
   let
     a = mod numb 10000000000000
     pr = product $ digits a
     newNumb = quot numb 10
   in
-    if pr > acc then ddd newNumb pr else ddd newNumb acc
+    if pr > acc then product' newNumb pr else product' newNumb acc
   )
 
 
