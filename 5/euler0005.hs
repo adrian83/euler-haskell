@@ -12,8 +12,13 @@ isDivisable _ [] = True
 isDivisable n (x:xs) = if mod n x == 0 then isDivisable n xs else False
 
 sm :: (Integral a) => [a] -> a
-sm [] = 0
-sm xs = head $ take 1 [i | i <- [20, 40..], isDivisable i xs]
+sm xs =
+  let
+    step = head xs
+  in
+    head [i | i <- [step, 2*step..], isDivisable i xs]
 
+main :: IO ()
 main = do
-    print (sm [20, 19 .. 1])
+  print (sm [10,9..1])
+  print (sm [20,19..1])
