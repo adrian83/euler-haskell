@@ -8,20 +8,20 @@
 -- Therefore any chain that arrives at 1 or 89 will become stuck in an endless loop. What is most amazing is that EVERY starting number will eventually arrive at 1 or 89.
 -- How many starting numbers below ten million will arrive at 89?
 
-sumOfSqares :: (Integral a) => [a] -> a
+sumOfSqares :: [Integer] -> Integer
 sumOfSqares [] = 0
 sumOfSqares n = sum [i*i | i <- n]
 
-digits :: (Integral a) => a -> [a]
-digits i = let
-  r = mod i 10
-  n = quot i 10
-  in if n == 0 then [r] else r : digits n
+digits :: Integer -> [Integer]
+digits 0 = []
+digits i = (mod i 10) : digits (quot i 10)
 
-chainTo89 :: (Integral a) => a -> a
-chainTo89 a = if a == 1 then 0 else (if a == 89 then 1 else chainTo89 $ sumOfSqares $ digits a)
+chainTo89 :: Integer -> Integer
+chainTo89 0 = 0
+chainTo89 89 = 1
+chainTo89 a = chainTo89 $ sumOfSqares $ digits a
 
-calculate89 :: (Integral a) => [a] -> a
+calculate89 :: [Integer] -> Integer
 calculate89 a = sum [ chainTo89 i | i <- a ]
 
 main = do
