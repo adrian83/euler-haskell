@@ -28,7 +28,7 @@ digits :: (Integral a) => a -> [a]
 digits 0 = []
 digits n = (mod n 10) : digits (quot n 10)
 
--- product' returns product on n (3rd arg) adjacent digists in given number (1st arg). Second arg is used as a tmp var holding currently biggest number
+-- product' returns product of n (3rd arg) adjacent digists in given number (1st arg). Second arg is used as a tmp var holding currently biggest product
 product' :: Integer -> Integer -> Integer -> Integer
 product' number biggest len
   | number < (10^len) = biggest
