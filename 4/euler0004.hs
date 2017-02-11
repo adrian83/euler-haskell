@@ -8,22 +8,28 @@
 
 isPalindrom :: (Eq a) => [a] -> Bool
 isPalindrom [] = True
-isPalindrom [a] = True
-isPalindrom (x:xs) = if x == last xs then isPalindrom $ init xs else False
+isPalindrom [_] = True
+isPalindrom (x:xs) = (x == last xs) && isPalindrom (init xs)
 
-biggest :: (Integral a, Show a) => a -> a -> a -> a
-biggest _ 999 c = c
-biggest a b c =
-    let m = a * b
-    in if isPalindrom (show m) && m > c then biggest a (b+1) m else biggest a (b+1) c
+largest :: Integer -> Integer -> Integer -> Integer -> Integer -> Integer -> Integer -> Integer
+largest maxNumb1 maxNumb2 minNumb1 minNumb2 currentNumb1 currentNumb2 currentBiggest
+  | maxNumb1 == currentNumb1 && maxNumb2 == currentNumb2 = currentBiggest
+  | maxNumb2 < currentNumb2 = largest maxNumb1 maxNumb2 minNumb1 minNumb2 (currentNumb1+1) minNumb2 currentBiggest
+  | otherwise =
+    let
+      mult = currentNumb2 * currentNumb1
+    in
+      if mult > currentBiggest && isPalindrom (show mult)
+        then largest maxNumb1 maxNumb2 minNumb1 minNumb2 currentNumb1 (currentNumb2+1) mult
+        else largest maxNumb1 maxNumb2 minNumb1 minNumb2 currentNumb1 (currentNumb2+1) currentBiggest
 
+largestBetween100And999 :: Integer -> Integer -> Integer -> Integer
+largestBetween100And999 = largest 999 999 100 100
 
-biggest2 :: (Integral a, Show a) => a -> a -> a -> a
-biggest2 999 _ c = c
-biggest2 a b c =
-    let nc = biggest a b c
-    in if nc > c then biggest2 (a+1) b nc else biggest2 (a+1) b c
+largestBetween10And99 :: Integer -> Integer -> Integer -> Integer
+largestBetween10And99 = largest 99 99 10 10
 
-
+main :: IO ()
 main = do
-    print (biggest2 100 100 0)
+  print (largestBetween100And999 100 100 0)
+  print (largestBetween10And99 10 10 0)
