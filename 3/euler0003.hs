@@ -4,7 +4,7 @@
 -- The prime factors of 13195 are 5, 7, 13 and 29.
 -- What is the largest prime factor of the number 600851475143 ?
 
--- returns True if given number is divisable by any of the number from given list, False otherwise
+-- returns True if given number is divisable by any number from given list, False otherwise
 divisable :: (Integral a) => a -> [a] -> Bool
 divisable 0 _ = False
 divisable n [] = False
