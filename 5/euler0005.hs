@@ -7,18 +7,18 @@
 -- the numbers from 1 to 20?
 
 
-isDivisable :: (Integral a) => a -> [a] -> Bool
+isDivisable :: Integer -> [Integer] -> Bool
 isDivisable _ [] = True
-isDivisable n (x:xs) = if mod n x == 0 then isDivisable n xs else False
+isDivisable n (x:xs) =  mod n x == 0 && isDivisable n xs
 
-sm :: (Integral a) => [a] -> a
-sm xs =
+smallestDivisableBy :: [Integer] -> Integer
+smallestDivisableBy x =
   let
-    step = head xs
+    step = head x
   in
-    head [i | i <- [step, 2*step..], isDivisable i xs]
+    head [i | i <- [step, 2*step..], isDivisable i x]
 
 main :: IO ()
 main = do
-  print (sm [10,9..1])
-  print (sm [20,19..1])
+  print (smallestDivisableBy [10,9..1])
+  print (smallestDivisableBy [20,19..1])
