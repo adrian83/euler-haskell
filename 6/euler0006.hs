@@ -14,7 +14,7 @@ sumOfSquares maks = sum [ a*a | a <- [1..maks] ]
 
 -- squareOfSums returns square of sums of numbers from 1 to given max (1st arg).
 squareOfSums :: Integer -> Integer
-squareOfSums maks = let s = sum [ a | a <- [1..maks] ] in s*s
+squareOfSums maks = sum [1,2..maks] ^ 2
 
 main :: IO ()
 main = do
