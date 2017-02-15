@@ -5,18 +5,16 @@
 -- and the sum of the digits in the number 10! is 3 + 6 + 2 + 8 + 8 + 0 + 0 = 27.
 -- Find the sum of the digits in the number 100!
 
-
-
 digits :: Integer -> [Integer]
 digits 0 = []
-digits i = (mod i 10) : digits (quot i 10)
+digits i = mod i 10 : digits (quot i 10)
 
 
-silnia :: Integer -> Integer
-silnia 0 = 1
-silnia n = n * silnia (n-1)
+factorial :: Integer -> Integer
+factorial 0 = 1
+factorial n = n * factorial (n-1)
 
-
+main :: IO ()
 main = do
-  print(sum $ digits $ silnia 10)
-  print(sum $ digits $ silnia 100)
+  print(sum $ digits $ factorial 10)
+  print(sum $ digits $ factorial 100)
