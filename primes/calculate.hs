@@ -21,7 +21,7 @@ main = do
   let smallerPrimes = toListOfIntegers (lines f)
   print ( show (length smallerPrimes) ++ " prime numbers already in file")
   let current = if null smallerPrimes then 2 else last smallerPrimes
-  let maxNumber = 300000
+  let maxNumber = 1010000
   let primes = calculatePrimes maxNumber current smallerPrimes
   let primesstr = intercalate "\n" [show i | i <- primes]
   --appendFile "./primes" primesstr
