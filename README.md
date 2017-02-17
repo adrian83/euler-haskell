@@ -4,3 +4,5 @@ Solutions to some programming exercises from [Project Euler](https://projecteule
 
 ### RUN: 
 `$ runhaskel <file.hs>`
+
+#### Optimization needed: 3
