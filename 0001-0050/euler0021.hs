@@ -18,16 +18,28 @@ result a acc =
   let
     b = sum (dividors a)
   in
-    if b < 10000 && b < 10000 && a /= b && a == (sum (dividors b)) then result (a-1) (acc+a+b) else result (a-1) acc
+    if b < 10000 && a < 10000 && a /= b && a == (sum (dividors b)) then result (a-1) (acc+a+b) else result (a-1) acc
 
+isAmicable :: Integer -> Bool
+isAmicable number =
+  let
+    divs = dividors number
+    divsSum = sum divs
+    divsDivs = dividors divsSum
+    sumDivsDivs = sum divsDivs
+  in
+    number /= divsSum && sumDivsDivs == number
 
-
+result2 :: Integer -> [Integer]
+result2 maxNumber = [i | i <- [2,3..maxNumber], isAmicable i]
 
 main :: IO ()
 main = do
-  print (dividors 220)
-  print (sum $ dividors 220)
-  print (dividors 284)
-  print (sum $ dividors 284)
-  print (result 15000 0)
+  --print (dividors 220)
+  --print (sum $ dividors 220)
+  --print (dividors 284)
+  --print (sum $ dividors 284)
+  --print (result 15000 0)
   -- print(result 10000 0)
+  print (isAmicable 220)
+  print (sum $ result2 10000)

@@ -14,42 +14,60 @@
 -- How many Sundays fell on the first of the month during the twentieth
 -- century (1 Jan 1901 to 31 Dec 2000)?
 
-year :: (Integer, Integer, Integer) -> Integer
-year (_,_,y) = y
+daysInMonth :: Integer -> Integer -> Integer
+daysInMonth year month
+  | month `elem` [4,6,9,11]        = 30
+  | month `elem` [1,3,5,7,8,10,12] = 31
+  | mod year 4 == 0                = 29
+  | otherwise                      = 28
+  
 
-month :: (Integer, Integer, Integer) -> Integer
-month (_,m,_) = m
+nextSunday :: (Integer, Integer, Integer) -> (Integer, Integer, Integer)
+nextSunday (d,m,y) =
+  let
+    nd = d + 7
+    daysInM = daysInMonth y m
+  in
+    if nd > daysInM
+      then (if m > 11 then (nd-daysInM, 1, y+1) else (nd-daysInM, m+1, y))
+      else (nd, m, y)
 
-day :: (Integer, Integer, Integer) -> Integer
-day (d,_,_) = d
+
+
+before :: (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> Bool
+before (fd,fm,fy) (sd,sm,sy) = (sy > fy) || (sy == fy && sm > fm) || (sy == fy && sm == fm && sd > fd)
+
+
+allSundaysBetween :: (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> [(Integer, Integer, Integer)]
+allSundaysBetween start end =
+  if before start end
+    then
+      let
+        next = nextSunday start
+      in
+        start : allSundaysBetween next end
+    else []
+
+
+firstInMonth :: (Integer, Integer, Integer) -> Bool
+firstInMonth (d,_,_) = d == 1
 
 
 firstSunday :: (Integer, Integer, Integer)
 firstSunday = (7, 1, 1900)
 
-before :: (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> Bool
-before first sec =
-  if year first > year second
-    then False
-    else
-      if year first == year second
-        then
+startDate :: (Integer, Integer, Integer)
+startDate = (1, 1, 1901)
 
-sundaysUntil :: (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> [(Integer, Integer, Integer)] -> [(Integer, Integer, Integer)]
-sundaysUntil from to =
-
-
-
-
-daysInYear :: Integer -> Integer
-daysInYear y
-  | mod y 4 == 0 = 365
-  | otherwise = 366
-
-days :: Integer -> Integer
-days n = foldl (+) 0 [daysInYear i | i <- [1901,1902..2000]]
-
+endDate :: (Integer, Integer, Integer)
+endDate = (31, 12, 2000)
 
 main :: IO ()
 main = do
-  print(quot ((days 7) - 6) 7)
+
+
+  let allSundays = allSundaysBetween (5,1,1901) (31,12,2000)
+  --let allSundays = allSundaysBetween (31,12,1900) (9,3,1901)
+  --print (allSundays )
+  print (length $ filter firstInMonth allSundays )
+  print (last allSundays )
