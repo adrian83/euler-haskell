@@ -6,3 +6,4 @@ Solutions to some programming exercises from [Project Euler](https://projecteule
 `$ runhaskel <file.hs>`
 
 #### Optimization needed: 3
+#### Not working: 32
