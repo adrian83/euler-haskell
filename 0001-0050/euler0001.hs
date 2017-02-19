@@ -1,4 +1,3 @@
-
 -- https://projecteuler.net/problem=1
 --
 -- If we list all the natural numbers below 10 that are multiples of 3 or 5,
@@ -11,5 +10,5 @@ result maxNumber = sum [x | x <- [1..(maxNumber-1)], mod x 3 == 0 || mod x 5 ==0
 
 main :: IO ()
 main = do
-  print (result 10)
-  print (result 1000)
+  print ("Result should be: " ++ show (23 :: Integer) ++ ", is: " ++ show (result 10))
+  print ("Result should be: " ++ show (233168 :: Integer) ++ ", is: " ++ show (result 1000))

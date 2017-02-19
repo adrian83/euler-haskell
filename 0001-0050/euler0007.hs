@@ -12,5 +12,5 @@ main = do
   f <- readFile "../primes/primes"
   let primes = [read s :: Integer | s <- lines f]
 
-  print (prime primes 6)
-  print (prime primes 10001)
+  print ("Result should be: " ++ show (13 :: Integer) ++ ", is: " ++ show (prime primes 6))
+  print ("Result should be: " ++ show (104743 :: Integer) ++ ", is: " ++ show (prime primes 10001))

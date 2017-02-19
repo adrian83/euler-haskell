@@ -1,4 +1,3 @@
-
 -- https://projecteuler.net/problem=6
 --
 -- The sum of the squares of the first ten natural numbers is,
@@ -14,9 +13,9 @@ sumOfSquares maks = sum [ a*a | a <- [1..maks] ]
 
 -- squareOfSums returns square of sums of numbers from 1 to given max (1st arg).
 squareOfSums :: Integer -> Integer
-squareOfSums maks = sum [1,2..maks] ^ 2
+squareOfSums maks = sum [1,2..maks] ^ (2 :: Integer)
 
 main :: IO ()
 main = do
-  print ( squareOfSums 10 - sumOfSquares 10 )
-  print ( squareOfSums 100 - sumOfSquares 100 )
+  print ("Result should be: " ++ show (2640 :: Integer) ++ ", is: " ++ show (squareOfSums 10 - sumOfSquares 10))
+  print ("Result should be: " ++ show (25164150 :: Integer) ++ ", is: " ++ show (squareOfSums 100 - sumOfSquares 100))

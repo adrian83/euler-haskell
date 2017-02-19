@@ -1,4 +1,3 @@
-
 -- https://projecteuler.net/problem=4
 --
 -- A palindromic number reads the same both ways. The largest palindrome made
@@ -31,5 +30,5 @@ largestBetween10And99 = largest 99 99 10 10
 
 main :: IO ()
 main = do
-  print (largestBetween100And999 100 100 0)
-  print (largestBetween10And99 10 10 0)
+  print ("Result should be: " ++ show (9009 :: Integer) ++ ", is: " ++ show (largestBetween10And99 10 10 0))
+  print ("Result should be: " ++ show (906609 :: Integer) ++ ", is: " ++ show (largestBetween100And999 100 100 0))

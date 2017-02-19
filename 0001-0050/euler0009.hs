@@ -6,22 +6,37 @@
 -- There exists exactly one Pythagorean triplet for which a + b + c = 1000.
 -- Find the product abc.
 
-thd :: (Integer, Integer, Integer) -> Integer
-thd (_,_,c) = c
+tProd :: (Integer, Integer, Integer) -> Integer
+tProd (a,b,c) = a*b*c
 
-generate :: Integer -> Integer -> (Integer, Integer, Integer)
-generate circuit a = [[a,b,(circuit - (a + b))] | b <- [1,2..circuit], a+b+(circuit - (a + b)) == circuit]
+result :: Integer -> Integer
+result circuit = tProd $ head $ calculate circuit (quot circuit 2) 0 0 []
+
+calculateA :: Integer -> Integer -> (Integer, Bool)
+calculateA c b
+  | a2 /= a^(2::Integer) || a > b = (a, False)
+  | otherwise = (a, True)
+  where
+    a2 = c^(2::Integer) - b^(2::Integer)
+    a = floor $ sqrt $ fromIntegral a2
 
 
--- pythagoreanTriplets returns list of pythagorean triplets for which sum of all edges is equal to 1st arg.
-pythagoreanTriplets :: Integer -> [[Integer]]
-pythagoreanTriplets s = [[a,b,c] | a <- [1,2..s], b <- [2,3..s], c <- [3,4..s], c > b, b > a, c^2 == a^2 + b^2, s == c + a + b]
 
-pythagoreanTriplets2 :: Integer -> [[Integer]]
-pythagoreanTriplets2 s =
+calculate :: Integer -> Integer -> Integer -> Integer -> [(Integer, Integer, Integer)] -> [(Integer, Integer, Integer)]
+calculate circuit maxC c b acc
+  | maxC == c = acc
+  | b <= halfC = calculate circuit maxC c (halfC+1) acc
+  | b >= c = calculate circuit maxC (c+1) 0 acc
+  | correctA && a < b && a + b + c == circuit = calculate circuit maxC (c+1) 0 ((c,b,a):acc)
+  | otherwise = calculate circuit maxC c (b+1) acc
+  where
+    halfC = quot c 2
+    aTuple = calculateA c b
+    a = fst aTuple
+    correctA = snd aTuple
 
-  [  | a <- [1,2..s], b <- [2,3..s], c <- [3,4..s], c > b, b > a, c^2 == a^2 + b^2, s == c + a + b]
 
 main :: IO ()
 main = do
-  print( product $ head $ pythagoreanTriplets 1000 )
+  print ("Result should be: " ++ show (60 :: Integer) ++ ", is: " ++ show (result 12))
+  print ("Result should be: " ++ show (31875000 :: Integer) ++ ", is: " ++ show (result 1000))

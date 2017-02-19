@@ -1,4 +1,3 @@
-
 -- https://projecteuler.net/problem=3
 --
 -- The prime factors of 13195 are 5, 7, 13 and 29.
@@ -19,8 +18,8 @@ main = do
 
   let max1 = 13195
   let biggest1 = biggestPF max1 primes
-  print biggest1
+  print ("Result should be: " ++ show (29 :: Integer) ++ ", is: " ++ show biggest1)
 
   let max2 = 600851475143
   let biggest2 = biggestPF max2 primes
-  print biggest2
+  print ("Result should be: " ++ show (6857 :: Integer) ++ ", is: " ++ show biggest2)

@@ -1,4 +1,3 @@
-
 -- https://projecteuler.net/problem=5
 --
 -- 2520 is the smallest number that can be divided by each of the numbers
@@ -20,5 +19,5 @@ smallestDivisableBy x =
 
 main :: IO ()
 main = do
-  print (smallestDivisableBy [10,9..1])
-  print (smallestDivisableBy [20,19..1])
+  print ("Result should be: " ++ show (2520 :: Integer) ++ ", is: " ++ show (smallestDivisableBy [10,9..1]))
+  print ("Result should be: " ++ show (232792560 :: Integer) ++ ", is: " ++ show (smallestDivisableBy [20,19..1]))
