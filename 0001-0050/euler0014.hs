@@ -27,5 +27,4 @@ longest maks current best
   where collz = chain current 1
 
 main :: IO ()
-main = do
-  print (longest 1000000 1 (0,0))
+main = print ("Result should be: " ++ show (837799 :: Integer) ++ ", is: " ++ show (longest 1000000 1 (0,0)))

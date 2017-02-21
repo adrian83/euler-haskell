@@ -6,10 +6,8 @@ import Data.List
 -- and is also prime.
 -- What is the largest n-digit pandigital prime that exists?
 
-containsZero :: [Char] -> Bool
-containsZero l = elem '0' l
 
-removeDuplicates :: [Char] -> [Char]
+removeDuplicates :: (Eq a) => [a] -> [a]
 removeDuplicates [a] = [a]
 removeDuplicates l =
   let
@@ -19,25 +17,19 @@ removeDuplicates l =
     if f == head t then removeDuplicates (f : tail t) else f : removeDuplicates t
 
 
-
 isPandigital :: Integer -> Bool
-isPandigital a =
-  let
-    str = show a
-  in
-    if containsZero str then False else (
-    let
-      l = length str
-      uniqueDigits = removeDuplicates $ sort str
-    in
-      (l == length uniqueDigits) && (last uniqueDigits == head ( show l))
-    )
+isPandigital number
+  | '0' `elem` numberAsStr = False
+  | (orgLen == length uniqueDigits) && (last uniqueDigits == head (show orgLen)) = True
+  | otherwise = False
+  where
+    numberAsStr = show number
+    orgLen = length numberAsStr
+    uniqueDigits = removeDuplicates $ sort numberAsStr
 
 
-
-
-result :: Integer -> [Integer] -> (Integer -> Bool) -> [Integer]
-result maxNumber primes checkIfPrime = [i | i <- [maxNumber,maxNumber-1..2], isPandigital i && checkIfPrime i]
+result :: Integer -> (Integer -> Bool) -> [Integer]
+result maxNumber checkIfPrime = [i | i <- [maxNumber,maxNumber-1..2], isPandigital i && checkIfPrime i]
 
 isPrime :: [Integer] -> Integer -> Bool
 isPrime [] _ = True
@@ -48,6 +40,4 @@ main = do
   f <- readFile "../primes/primes"
   let primes = [read s :: Integer | s <- lines f]
 
-
-  print(result 4321 primes (isPrime primes))
-  print( head $ result 7654321 primes (isPrime primes))
+  print ("Result should be: " ++ show (7652413 :: Integer) ++ ", is: " ++ show (head $ result 7654321 (isPrime primes)))
