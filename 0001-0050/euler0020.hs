@@ -9,12 +9,14 @@ digits :: Integer -> [Integer]
 digits 0 = []
 digits i = mod i 10 : digits (quot i 10)
 
-
 factorial :: Integer -> Integer
 factorial 0 = 1
 factorial n = n * factorial (n-1)
 
+result :: Integer -> Integer
+result number = sum $ digits $ factorial number
+
 main :: IO ()
 main = do
-  print(sum $ digits $ factorial 10)
-  print(sum $ digits $ factorial 100)
+  print ("Result should be: " ++ show (27 :: Integer) ++ ", is: " ++ show (result 10))
+  print ("Result should be: " ++ show (647 :: Integer) ++ ", is: " ++ show (result 100))

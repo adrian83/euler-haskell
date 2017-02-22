@@ -20,7 +20,7 @@ daysInMonth year month
   | month `elem` [1,3,5,7,8,10,12] = 31
   | mod year 4 == 0                = 29
   | otherwise                      = 28
-  
+
 
 nextSunday :: (Integer, Integer, Integer) -> (Integer, Integer, Integer)
 nextSunday (d,m,y) =
@@ -38,15 +38,13 @@ before :: (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> Bool
 before (fd,fm,fy) (sd,sm,sy) = (sy > fy) || (sy == fy && sm > fm) || (sy == fy && sm == fm && sd > fd)
 
 
-allSundaysBetween :: (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> [(Integer, Integer, Integer)]
-allSundaysBetween start end =
-  if before start end
-    then
-      let
-        next = nextSunday start
-      in
-        start : allSundaysBetween next end
-    else []
+allSundaysBetween :: (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> [(Integer, Integer, Integer)]
+allSundaysBetween sundayInPast start end
+  | sundayInPast `before` start = allSundaysBetween next start end
+  | end `before` sundayInPast = []
+  | otherwise = next : allSundaysBetween next start end
+  where
+    next = nextSunday sundayInPast
 
 
 firstInMonth :: (Integer, Integer, Integer) -> Bool
@@ -62,12 +60,8 @@ startDate = (1, 1, 1901)
 endDate :: (Integer, Integer, Integer)
 endDate = (31, 12, 2000)
 
+result :: (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> Int
+result start end = length $ filter firstInMonth (allSundaysBetween firstSunday start end)
+
 main :: IO ()
-main = do
-
-
-  let allSundays = allSundaysBetween (5,1,1901) (31,12,2000)
-  --let allSundays = allSundaysBetween (31,12,1900) (9,3,1901)
-  --print (allSundays )
-  print (length $ filter firstInMonth allSundays )
-  print (last allSundays )
+main = print ("Result should be: " ++ show (171 :: Integer) ++ ", is: " ++ show (result startDate endDate))
