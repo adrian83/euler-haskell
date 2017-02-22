@@ -70,10 +70,17 @@ triple n =
   in
     triple (t*100) ++ (if d > 9 then andd ++ double d else andd ++ single s)
 
-strListLength :: [String] -> Int
-strListLength l = length $ concat l
+
+result :: Integer -> String
+result maxNumber
+  | maxNumber == 0 = ""
+  | maxNumber < 10 = result (maxNumber - 1) ++ single maxNumber
+  | maxNumber < 100 = result (maxNumber - 1) ++ double maxNumber
+  | maxNumber <= 1000 = result (maxNumber - 1) ++ triple maxNumber
+  | otherwise = "Bummer. Not implemented"
+
 
 main :: IO ()
 main = do
-  print(strListLength[single i | i <- [1,2..5]])
-  print(strListLength ([single i | i <- [1,2..9]] ++ [double i | i <- [10,11..99]] ++ [triple i | i <- [100,101..1000]]) )
+  print ("Result should be: " ++ show (19 :: Integer) ++ ", is: " ++ show (length $ result 5))
+  print ("Result should be: " ++ show (21124 :: Integer) ++ ", is: " ++ show (length $ result 1000))
