@@ -1,11 +1,13 @@
-import Data.List
-
+-- https://projecteuler.net/problem=32
+--
 -- We shall say that an n-digit number is pandigital if it makes use of all the
 -- digits 1 to n exactly once; for example, the 5-digit number, 15234, is 1 through 5 pandigital.
 -- The product 7254 is unusual, as the identity, 39 × 186 = 7254, containing multiplicand, multiplier, and product is 1 through 9 pandigital.
 -- Find the sum of all products whose multiplicand/multiplier/product identity can be written as a 1 through 9 pandigital.
 -- HINT: Some products can be obtained in more than one way so be sure to only include it once in your sum.
 
+
+import Data.List
 
 removeDuplicates :: (Eq a) => [a] -> [a]
 removeDuplicates [a] = [a]
@@ -45,8 +47,7 @@ calc maxNumber number1 number2 acc
 
 main :: IO ()
 main = do
-  --print(pows 2 100)
-  --print(length $ allNumbs 100)
+
   let krotki = calc 654321 1 1 []
   print( krotki )
   let prods = [c | (_,_,c) <- krotki]

@@ -17,4 +17,4 @@ result left coinss acc
   | otherwise = (acc+1) + result left (tail coinss) acc
 
 main :: IO ()
-main = print(result 200 coins 0)
+main = print ("Result should be: " ++ show (73682 :: Integer) ++ ", is: " ++ show (result 200 coins 0))

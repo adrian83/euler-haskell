@@ -11,14 +11,14 @@
 -- What is the sum of the numbers on the diagonals in a 1001 by 1001 spiral
 -- formed in the same way?
 
-
 result :: Integer -> Integer -> Integer -> Integer -> [Integer] -> [Integer]
-result maxLevel level step curStep acc =
-    if level > maxLevel then acc else (
-      if curStep == 0 then result maxLevel (level+2) (step+2) 4 acc else result maxLevel level step (curStep-1) ((head acc + step) : acc)
-    )
+result maxLevel level step curStep acc
+  | level > maxLevel = acc
+  | curStep == 0     = result maxLevel (level+2) (step+2) 4 acc
+  | otherwise        = result maxLevel level step (curStep-1) ((head acc + step) : acc)
+
 
 main :: IO ()
 main = do
-  print(sum $ result 5 3 2 4 [1])
-  print(sum $ result 1001 3 2 4 [1])
+  print ("Result should be: " ++ show (101 :: Integer) ++ ", is: " ++ show (sum $ result 5 3 2 4 [1]))
+  print ("Result should be: " ++ show (669171001 :: Integer) ++ ", is: " ++ show (sum $ result 1001 3 2 4 [1]))

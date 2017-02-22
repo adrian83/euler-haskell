@@ -1,4 +1,3 @@
-import Data.List
 -- https://projecteuler.net/problem=41
 
 -- We shall say that an n-digit number is pandigital if it makes use of all
@@ -6,6 +5,7 @@ import Data.List
 -- and is also prime.
 -- What is the largest n-digit pandigital prime that exists?
 
+import Data.List
 
 removeDuplicates :: (Eq a) => [a] -> [a]
 removeDuplicates [a] = [a]

@@ -11,6 +11,4 @@ result :: Integer -> Integer -> Integer
 result digits lenOfSum = mod (sumOfPowers lenOfSum) (10^digits)
 
 main :: IO ()
-main = do
-  print(result 20 10)
-  print(result 10 1000)
+main = print ("Result should be: " ++ show (9110846700 :: Integer) ++ ", is: " ++ show (result 10 1000))

@@ -41,10 +41,7 @@ isPrime primes number
 main :: IO ()
 main = do
   f <- readFile "../primes/primes"
-  let primes = [read s :: Integer | s <- lines f]
+  let primes = filter (<1000000) [read s :: Integer | s <- lines f]
 
-  let numberIsPrime = isPrime primes
-
-  print (result 100 primes (trimList 100 primes) (0,0) numberIsPrime)
-  print (result 1000 primes (trimList 1000 primes) (0,0) numberIsPrime)
-  print (result 1000000 primes (trimList 1000000 primes) (0,0) numberIsPrime)
+  print ("Result should be: " ++ show (953 :: Integer) ++ ", is: " ++ show (fst $ result 1000 primes (filter (<1000) primes) (0,0) (isPrime primes)))
+  print ("Result should be: " ++ show (997651 :: Integer) ++ ", is: " ++ show (fst $ result 1000000 primes (filter (<1000000) primes) (0,0) (isPrime primes)))
