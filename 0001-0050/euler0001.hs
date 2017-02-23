@@ -4,9 +4,11 @@
 -- we get 3, 5, 6 and 9. The sum of these multiples is 23.
 -- Find the sum of all the multiples of 3 or 5 below 1000.
 
+mySum :: Integer -> (Integer -> Bool) -> Integer
+mySum maxNumber myFilter = sum [x | x <- [1..(maxNumber-1)], myFilter x]
 
 result :: Integer -> Integer
-result maxNumber = sum [x | x <- [1..(maxNumber-1)], mod x 3 == 0 || mod x 5 ==0]
+result maxNumber = mySum maxNumber (\x -> mod x 3 == 0 || mod x 5 ==0)
 
 main :: IO ()
 main = do

@@ -11,11 +11,9 @@ isDivisable _ [] = True
 isDivisable n (x:xs) =  mod n x == 0 && isDivisable n xs
 
 smallestDivisableBy :: [Integer] -> Integer
-smallestDivisableBy x =
-  let
-    step = head x
-  in
-    head [i | i <- [step, 2*step..], isDivisable i x]
+smallestDivisableBy x = head [i | i <- [step, 2*step..], isDivisable i x]
+  where step = head x
+
 
 main :: IO ()
 main = do

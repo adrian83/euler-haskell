@@ -21,7 +21,7 @@ isPalindromic :: Integer -> Bool
 isPalindromic n = isPalindrom (showIntAtBase 2 intToDigit n "") && isPalindrom (digits n)
 
 sumOfPalindromics :: Integer -> Integer
-sumOfPalindromics maxNumber = sum [i | i <- [1,2..maxNumber], isPalindromic i]
+sumOfPalindromics maxNumber = sum [i | i <- [1,2..maxNumber+1], isPalindromic i]
 
 main :: IO ()
-main = print ("Result should be: " ++ show (872187 :: Integer) ++ ", is: " ++ show (sumOfPalindromics 1000000))
+main = print ("Result should be: " ++ show (872187 :: Integer) ++ ", is: " ++ show (sumOfPalindromics 100000))

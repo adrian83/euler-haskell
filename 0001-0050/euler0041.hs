@@ -9,12 +9,10 @@ import Data.List
 
 removeDuplicates :: (Eq a) => [a] -> [a]
 removeDuplicates [a] = [a]
-removeDuplicates l =
-  let
-    f = head l
-    t = tail l
-  in
-    if f == head t then removeDuplicates (f : tail t) else f : removeDuplicates t
+removeDuplicates elements = if f == head t then removeDuplicates (f : tail t) else f : removeDuplicates t
+  where
+    f = head elements
+    t = tail elements
 
 
 isPandigital :: Integer -> Bool
@@ -32,8 +30,11 @@ result :: Integer -> (Integer -> Bool) -> [Integer]
 result maxNumber checkIfPrime = [i | i <- [maxNumber,maxNumber-1..2], isPandigital i && checkIfPrime i]
 
 isPrime :: [Integer] -> Integer -> Bool
-isPrime [] _ = True
-isPrime primes e = if e == head primes then isPrime (tail primes) e else (if head primes > e then True else (if mod e (head primes) == 0 then False else isPrime (tail primes) e ))
+isPrime primes number
+  | null primes || head primes > number = True
+  | mod number (head primes) == 0       = False
+  | otherwise                           = isPrime (tail primes) number
+
 
 main :: IO ()
 main = do

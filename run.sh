@@ -8,7 +8,7 @@ do
 
     for entry in "."/*
     do
-      echo "TASK: " "$entry"
+      echo "<--------> TASK: " "$entry" " <-------->"
       date && runhaskell "$entry" && date
     done
 

@@ -20,8 +20,6 @@ calculateA c b
     a2 = c^(2::Integer) - b^(2::Integer)
     a = floor $ sqrt $ fromIntegral a2
 
-
-
 calculate :: Integer -> Integer -> Integer -> Integer -> [(Integer, Integer, Integer)] -> [(Integer, Integer, Integer)]
 calculate circuit maxC c b acc
   | maxC == c = acc

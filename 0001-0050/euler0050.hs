@@ -11,19 +11,19 @@ mySum maxNumber tmpResult elems
   | null elems || tmpResult > maxNumber = tmpResult
   | otherwise                           = mySum maxNumber (tmpResult + head elems) (tail elems)
 
-result :: Integer -> [Integer] -> [Integer] -> (Integer, Int) -> (Integer -> Bool) -> (Integer, Int)
-result _ [] _ tmpSolution _ = tmpSolution
-result maxNumber orgPrimes [] tmpSolution checkIfPrime = result maxNumber (tail orgPrimes) (tail orgPrimes) tmpSolution checkIfPrime
-result maxNumber orgPrimes primes tmpSolution checkIfPrime =
+calculatePrimeAndSumLen :: Integer -> [Integer] -> [Integer] -> (Integer, Int) -> (Integer -> Bool) -> (Integer, Int)
+calculatePrimeAndSumLen _ [] _ tmpSolution _ = tmpSolution
+calculatePrimeAndSumLen maxNumber orgPrimes [] tmpSolution checkIfPrime = calculatePrimeAndSumLen maxNumber (tail orgPrimes) (tail orgPrimes) tmpSolution checkIfPrime
+calculatePrimeAndSumLen maxNumber orgPrimes primes tmpSolution checkIfPrime =
   if length primes < snd tmpSolution
-    then result maxNumber (tail orgPrimes) (trimList maxNumber (tail orgPrimes)) tmpSolution checkIfPrime
+    then calculatePrimeAndSumLen maxNumber (tail orgPrimes) (trimList maxNumber (tail orgPrimes)) tmpSolution checkIfPrime
     else (
       let
         primesSum = mySum maxNumber 0 primes
       in
         if length primes > snd tmpSolution && primesSum < maxNumber && checkIfPrime primesSum
-          then result maxNumber orgPrimes (init primes) (primesSum, length primes) checkIfPrime
-          else result maxNumber orgPrimes (init primes) tmpSolution checkIfPrime
+          then calculatePrimeAndSumLen maxNumber orgPrimes (init primes) (primesSum, length primes) checkIfPrime
+          else calculatePrimeAndSumLen maxNumber orgPrimes (init primes) tmpSolution checkIfPrime
     )
 
 trimList :: Integer -> [Integer] -> [Integer]
@@ -38,10 +38,13 @@ isPrime primes number
   | mod number (head primes) == 0       = False
   | otherwise                           = isPrime (tail primes) number
 
+result :: Integer -> [Integer] -> (Integer, Int)
+result number primes = calculatePrimeAndSumLen number primes (filter (<number) primes) (0,0) (isPrime primes)
+
 main :: IO ()
 main = do
   f <- readFile "../primes/primes"
-  let primes = filter (<1000000) [read s :: Integer | s <- lines f]
+  let primes = [read s :: Integer | s <- lines f]
 
-  print ("Result should be: " ++ show (953 :: Integer) ++ ", is: " ++ show (fst $ result 1000 primes (filter (<1000) primes) (0,0) (isPrime primes)))
-  print ("Result should be: " ++ show (997651 :: Integer) ++ ", is: " ++ show (fst $ result 1000000 primes (filter (<1000000) primes) (0,0) (isPrime primes)))
+  print ("Result should be: " ++ show (953 :: Integer) ++ ", is: " ++ show (fst $ result 1000 primes))
+  print ("Result should be: " ++ show (997651 :: Integer) ++ ", is: " ++ show (fst $ result 1000000 primes ))

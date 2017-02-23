@@ -34,12 +34,4 @@ result2 :: Integer -> [Integer]
 result2 maxNumber = [i | i <- [2,3..maxNumber], isAmicable i]
 
 main :: IO ()
-main = do
-  --print (dividors 220)
-  --print (sum $ dividors 220)
-  --print (dividors 284)
-  --print (sum $ dividors 284)
-  --print (result 15000 0)
-  -- print(result 10000 0)
-  print (isAmicable 220)
-  print (sum $ result2 10000)
+main = print ("Result should be: " ++ show (31626 :: Integer) ++ ", is: " ++ show (sum $ result2 10000))

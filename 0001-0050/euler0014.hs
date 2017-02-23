@@ -26,5 +26,9 @@ longest maks current best
   | otherwise        = longest maks (current+1) best
   where collz = chain current 1
 
+result :: Integer -> Integer
+result maxNumber = longest maxNumber 1 (0,0)
+
+
 main :: IO ()
-main = print ("Result should be: " ++ show (837799 :: Integer) ++ ", is: " ++ show (longest 1000000 1 (0,0)))
+main = print ("Result should be: " ++ show (837799 :: Integer) ++ ", is: " ++ show (result 1000000))

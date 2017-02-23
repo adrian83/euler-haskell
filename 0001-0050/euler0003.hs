@@ -8,13 +8,13 @@
 biggestPF :: Integer -> [Integer] -> Integer
 biggestPF number primes
     | mod number biggestPrime == 0 = biggestPrime
-    | otherwise                    = biggestPF number $ init primes
-    where biggestPrime = last primes
+    | otherwise                    = biggestPF number $ tail primes
+    where biggestPrime = head primes
 
 main :: IO ()
 main = do
   f <- readFile "../primes/primes"
-  let primes = [read s :: Integer | s <- lines f]
+  let primes = reverse [read s :: Integer | s <- lines f]
 
   let max1 = 13195
   let biggest1 = biggestPF max1 primes
