@@ -6,4 +6,4 @@ Solutions to some programming exercises from [Project Euler](https://projecteule
 `$ runhaskell <file.hs>`
 
 #### Optimization needed: 14, 23
-#### Not working: 32
+#### Not working: 32, 60
