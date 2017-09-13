@@ -18,14 +18,6 @@
 -- Find the sum of all the positive integers which cannot be written as the
 -- sum of two abundant numbers.
 
-dividers :: Integer -> [Integer]
-dividers a = [ i | i <- [1,2..(quot a 2)], mod a i == 0]
-
-abundant :: Integer -> Bool
-abundant number = number < sum (dividers number)
-
-abundants :: Integer -> [Integer]
-abundants maxx = [i | i <- [1,2..maxx], abundant i]
 
 isSumOfTwoAbundant :: Integer -> [Integer] -> Bool
 isSumOfTwoAbundant number abundantNumbers
@@ -34,10 +26,17 @@ isSumOfTwoAbundant number abundantNumbers
   | (number - head abundantNumbers) `elem` abundantNumbers = True
   | otherwise = isSumOfTwoAbundant number (tail abundantNumbers)
 
-result :: Integer -> Integer
-result maxx =
-  let abundantNumbers = abundants maxx
-  in sum [ i | i <- [1,2..maxx], not $ isSumOfTwoAbundant i abundantNumbers]
+result :: Integer -> [Integer] -> Integer
+result maxx abundantNumbers =
+  let n = length abundantNumbers
+
+  sum [ i | i <- [1,2..maxx], not $ isSumOfTwoAbundant i abundantNumbers]
 
 main :: IO ()
-main = print ("Result should be: " ++ show (4179871 :: Integer) ++ ", is: " ++ show (result 29000))
+--main = print ("Result should be: " ++ show (4179871 :: Integer) ++ ", is: " ++ show (result 28123))
+main = do
+
+  f <- readFile "../abundants/abundants"
+  let abundants = filter (\a -> a < 28123) [read s :: Integer | s <- lines f]
+
+  print ("Result should be: " ++ show (4179871 :: Integer) ++ ", is: " ++ show (result 28123 abundants))
