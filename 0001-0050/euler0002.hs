@@ -25,7 +25,7 @@ evenFibonaccis maxNumber = filter even (fibonaccis maxNumber)
 
 main :: IO ()
 main = do
-  let res1 = sum $ evenFibonaccis 100
-  print ("Result should be: " ++ show (44 :: Integer) ++ ", is: " ++ show res1)
+  --let res1 = sum $ evenFibonaccis 100
+  --print ("Expected: " ++ show (44 :: Integer) ++ ", actual: " ++ show res1)
   let res2 = sum $ evenFibonaccis 4000000
-  print ("Result should be: " ++ show (4613732 :: Integer) ++ ", is: " ++ show res2)
+  print ("Expected: " ++ show (4613732 :: Integer) ++ ", actual: " ++ show res2)

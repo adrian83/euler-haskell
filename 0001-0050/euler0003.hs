@@ -5,10 +5,10 @@
 
 
 -- returns biggest prime number (taken from 2nd argument) that divides exactly given number (1st argument)
-biggestPF :: Integer -> [Integer] -> Integer
-biggestPF number primes
+biggestPF :: [Integer] -> Integer -> Integer
+biggestPF primes number
     | mod number biggestPrime == 0 = biggestPrime
-    | otherwise                    = biggestPF number $ tail primes
+    | otherwise                    = biggestPF (tail primes) number 
     where biggestPrime = head primes
 
 main :: IO ()
@@ -16,10 +16,10 @@ main = do
   f <- readFile "../primes/primes"
   let primes = reverse [read s :: Integer | s <- lines f]
 
-  let max1 = 13195
-  let biggest1 = biggestPF max1 primes
-  print ("Result should be: " ++ show (29 :: Integer) ++ ", is: " ++ show biggest1)
+  let pfCalculator = biggestPF primes
 
-  let max2 = 600851475143
-  let biggest2 = biggestPF max2 primes
-  print ("Result should be: " ++ show (6857 :: Integer) ++ ", is: " ++ show biggest2)
+  --let biggest1 = pfCalculator 13195
+  --print ("Expected: " ++ show (29 :: Integer) ++ ", actual: " ++ show biggest1)
+
+  let biggest2 = pfCalculator 600851475143
+  print ("Expected: " ++ show (6857 :: Integer) ++ ", actual: " ++ show biggest2)

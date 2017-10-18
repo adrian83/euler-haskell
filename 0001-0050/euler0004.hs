@@ -22,13 +22,13 @@ largest maxNumb1 maxNumb2 minNumb1 minNumb2 currentNumb1 currentNumb2 currentBig
         then largest maxNumb1 maxNumb2 minNumb1 minNumb2 currentNumb1 (currentNumb2+1) mult
         else largest maxNumb1 maxNumb2 minNumb1 minNumb2 currentNumb1 (currentNumb2+1) currentBiggest
 
-largestBetween100And999 :: Integer -> Integer -> Integer -> Integer
-largestBetween100And999 = largest 999 999 100 100
+largestBetween100And999 :: Integer -> Integer
+largestBetween100And999 = largest 999 999 100 100 100 100
 
-largestBetween10And99 :: Integer -> Integer -> Integer -> Integer
-largestBetween10And99 = largest 99 99 10 10
+largestBetween10And99 :: Integer -> Integer
+largestBetween10And99 = largest 99 99 10 10 10 10
 
 main :: IO ()
 main = do
-  print ("Result should be: " ++ show (9009 :: Integer) ++ ", is: " ++ show (largestBetween10And99 10 10 0))
-  print ("Result should be: " ++ show (906609 :: Integer) ++ ", is: " ++ show (largestBetween100And999 100 100 0))
+  --print ("Expected: " ++ show (9009 :: Integer) ++ ", actual: " ++ show (largestBetween10And99 0))
+  print ("Expected: " ++ show (906609 :: Integer) ++ ", actual: " ++ show (largestBetween100And999 0))
