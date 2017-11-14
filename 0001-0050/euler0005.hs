@@ -5,17 +5,14 @@
 -- What is the smallest positive number that is evenly divisible by all of
 -- the numbers from 1 to 20?
 
-
-isDivisable :: Integer -> [Integer] -> Bool
-isDivisable _ [] = True
-isDivisable n (x:xs) =  mod n x == 0 && isDivisable n xs
+divisableByAll :: Integer -> [Integer] -> Bool
+divisableByAll number divisors = all (\b -> b) (map (\d -> mod number d == 0) divisors)
 
 smallestDivisableBy :: [Integer] -> Integer
-smallestDivisableBy x = head [i | i <- [step, 2*step..], isDivisable i x]
-  where step = head x
-
+smallestDivisableBy x = head [i | i <- [step, 2*step..], divisableByAll i x]
+  where step = maximum x
 
 main :: IO ()
 main = do
-  print ("Result should be: " ++ show (2520 :: Integer) ++ ", is: " ++ show (smallestDivisableBy [10,9..1]))
-  print ("Result should be: " ++ show (232792560 :: Integer) ++ ", is: " ++ show (smallestDivisableBy [20,19..1]))
+  --print ("Expected: " ++ show (2520 :: Integer) ++ ", actual: " ++ show (smallestDivisableBy [1,2..10]))
+  print ("Expected: " ++ show (232792560 :: Integer) ++ ", actual: " ++ show (smallestDivisableBy [1,2..20]))
