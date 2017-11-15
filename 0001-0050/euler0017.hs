@@ -70,17 +70,17 @@ triple n =
   in
     triple (t*100) ++ (if d > 9 then andd ++ double d else andd ++ single s)
 
+numberToWord :: Integer -> String
+numberToWord number
+  | number < 1 || number > 1000 = error "number out of range"
+  | number < 10                 = single number
+  | number < 100                = double number
+  | otherwise                   = triple number
 
-result :: Integer -> String
-result maxNumber
-  | maxNumber == 0 = ""
-  | maxNumber < 10 = result (maxNumber - 1) ++ single maxNumber
-  | maxNumber < 100 = result (maxNumber - 1) ++ double maxNumber
-  | maxNumber <= 1000 = result (maxNumber - 1) ++ triple maxNumber
-  | otherwise = "Bummer. Not implemented"
-
+numbersToString :: [Integer] -> String
+numbersToString numbers = foldl (++) "" [ numberToWord n | n <- numbers ]
 
 main :: IO ()
 main = do
-  print ("Result should be: " ++ show (19 :: Integer) ++ ", is: " ++ show (length $ result 5))
-  print ("Result should be: " ++ show (21124 :: Integer) ++ ", is: " ++ show (length $ result 1000))
+  --print ("Expected: " ++ show (19 :: Integer) ++ ", actual: " ++ show (length $ numbersToString [1,2..5]))
+  print ("Expected: " ++ show (21124 :: Integer) ++ ", actual: " ++ show (length $ numbersToString [1,2..1000]))

@@ -11,24 +11,29 @@
 -- Which starting number, under one million, produces the longest chain?
 -- NOTE: Once the chain starts the terms are allowed to go above one million.
 
--- chain returns length of the chain for given number (1st arg). Second arg contains current length.
-chain :: Integer -> Integer -> Integer
-chain n r
-  | n == 1       = r
-  | mod n 2 == 0 = chain (quot n 2) (r+1)
-  | otherwise    = chain ((3*n)+1) (r+1)
+import Data.List
+import Data.Ord
 
+data NumberAndChanLen = NumberAndChanLen {
+    number :: Integer,
+    chainLen :: Integer
+  } deriving (Show, Eq)
 
-longest :: Integer -> Integer -> (Integer, Integer) -> Integer
-longest maks current best
-  | current == maks  = fst best
-  | collz > snd best = longest maks (current+1) (current,collz)
-  | otherwise        = longest maks (current+1) best
-  where collz = chain current 1
+instance Ord NumberAndChanLen where
+  compare s1 s2
+    | chainLen s1 > chainLen s2 = LT
+    | chainLen s1 < chainLen s2 = GT
+    | otherwise = EQ
 
-result :: Integer -> Integer
-result maxNumber = longest maxNumber 1 (0,0)
+chain :: Integer -> Integer
+chain 1 = 1
+chain number = 1 + (if mod number 2 == 0 then chain (quot number 2) else chain ((3 * number) + 1))
 
+candidates :: Integer -> [NumberAndChanLen]
+candidates maxNumber = [NumberAndChanLen { number=n, chainLen=(chain n) } | n <- [1,2..maxNumber]]
+
+longestChain :: Integer -> Integer
+longestChain maxNumber = number (head (sort (candidates maxNumber)))
 
 main :: IO ()
-main = print ("Result should be: " ++ show (837799 :: Integer) ++ ", is: " ++ show (result 1000000))
+main = print ("Expected: " ++ show (837799 :: Integer) ++ ", actual: " ++ show (longestChain 1000000))
