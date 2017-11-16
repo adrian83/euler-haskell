@@ -14,12 +14,12 @@
 import Data.List
 import Data.Ord
 
-data NumberAndChanLen = NumberAndChanLen {
+data NumberAndChainLen = NumberAndChainLen {
     number :: Integer,
     chainLen :: Integer
   } deriving (Show, Eq)
 
-instance Ord NumberAndChanLen where
+instance Ord NumberAndChainLen where
   compare s1 s2
     | chainLen s1 > chainLen s2 = LT
     | chainLen s1 < chainLen s2 = GT
@@ -29,8 +29,8 @@ chain :: Integer -> Integer
 chain 1 = 1
 chain number = 1 + (if mod number 2 == 0 then chain (quot number 2) else chain ((3 * number) + 1))
 
-candidates :: Integer -> [NumberAndChanLen]
-candidates maxNumber = [NumberAndChanLen { number=n, chainLen=(chain n) } | n <- [1,2..maxNumber]]
+candidates :: Integer -> [NumberAndChainLen]
+candidates maxNumber = [NumberAndChainLen { number=n, chainLen=(chain n) } | n <- [1,2..maxNumber]]
 
 longestChain :: Integer -> Integer
 longestChain maxNumber = number (head (sort (candidates maxNumber)))

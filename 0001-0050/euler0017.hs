@@ -11,7 +11,6 @@
 -- contains 20 letters. The use of "and" when writing out numbers is
 -- in compliance with British usage.
 
-
 single :: Integer -> String
 single 1 = "one"
 single 2 = "two"
@@ -61,7 +60,6 @@ triple 600 = single 6 ++ hundred
 triple 700 = single 7 ++ hundred
 triple 800 = single 8 ++ hundred
 triple 900 = single 9 ++ hundred
-triple 1000 = "onethousand"
 triple n =
   let
     d = mod n 100
@@ -70,12 +68,17 @@ triple n =
   in
     triple (t*100) ++ (if d > 9 then andd ++ double d else andd ++ single s)
 
+quatre :: Integer -> String
+quatre 1000 = "onethousand"
+quatre _ = error "not supported"
+
 numberToWord :: Integer -> String
 numberToWord number
   | number < 1 || number > 1000 = error "number out of range"
   | number < 10                 = single number
   | number < 100                = double number
-  | otherwise                   = triple number
+  | number < 1000               = triple number
+  | otherwise                   = quatre number
 
 numbersToString :: [Integer] -> String
 numbersToString numbers = foldl (++) "" [ numberToWord n | n <- numbers ]
