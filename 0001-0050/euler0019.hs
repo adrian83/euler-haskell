@@ -14,6 +14,12 @@
 -- How many Sundays fell on the first of the month during the twentieth
 -- century (1 Jan 1901 to 31 Dec 2000)?
 
+data Date = Date {
+    year :: Integer,
+    month :: Integer,
+    day :: Integer
+  } deriving (Show)
+
 daysInMonth :: Integer -> Integer -> Integer
 daysInMonth year month
   | month `elem` [4,6,9,11]        = 30
@@ -21,47 +27,43 @@ daysInMonth year month
   | mod year 4 == 0                = 29
   | otherwise                      = 28
 
+weekAfter :: Date -> Date
+weekAfter date =
+  if nextDay > daysInMth
+    then if month date > 11
+      then Date {year=(year date + 1), month=1, day=(nextDay - daysInMth) }
+      else Date {year=year date, month=(month date + 1), day=(nextDay - daysInMth) }
+    else Date {year=year date, month=month date, day=nextDay }
+  where
+    nextDay = (day date) + 7
+    daysInMth = daysInMonth (year date) (month date)
 
-nextSunday :: (Integer, Integer, Integer) -> (Integer, Integer, Integer)
-nextSunday (d,m,y) =
-  let
-    nd = d + 7
-    daysInM = daysInMonth y m
-  in
-    if nd > daysInM
-      then (if m > 11 then (nd-daysInM, 1, y+1) else (nd-daysInM, m+1, y))
-      else (nd, m, y)
+isBefore :: Date -> Date -> Bool
+isBefore first second = (year second > year first) || (year second == year first && month second > month first) || (year second == year first && month second == month first && day second > day first)
 
-
-
-before :: (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> Bool
-before (fd,fm,fy) (sd,sm,sy) = (sy > fy) || (sy == fy && sm > fm) || (sy == fy && sm == fm && sd > fd)
-
-
-allSundaysBetween :: (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> [(Integer, Integer, Integer)]
+allSundaysBetween :: Date -> Date -> Date -> [Date]
 allSundaysBetween sundayInPast start end
-  | sundayInPast `before` start = allSundaysBetween next start end
-  | end `before` sundayInPast = []
+  | sundayInPast `isBefore` start = allSundaysBetween next start end
+  | end `isBefore` sundayInPast = []
   | otherwise = next : allSundaysBetween next start end
   where
-    next = nextSunday sundayInPast
+    next = weekAfter sundayInPast
 
 
-firstInMonth :: (Integer, Integer, Integer) -> Bool
-firstInMonth (d,_,_) = d == 1
+firstInMonth :: Date -> Bool
+firstInMonth date = day date == 1
 
+firstSunday :: Date
+firstSunday = Date {year=1900, month=1, day=7 }
 
-firstSunday :: (Integer, Integer, Integer)
-firstSunday = (7, 1, 1900)
+startDate :: Date
+startDate = Date {year=1901, month=1, day=1 }
 
-startDate :: (Integer, Integer, Integer)
-startDate = (1, 1, 1901)
+endDate :: Date
+endDate = Date {year=2000, month=12, day=31 }
 
-endDate :: (Integer, Integer, Integer)
-endDate = (31, 12, 2000)
-
-result :: (Integer, Integer, Integer) -> (Integer, Integer, Integer) -> Int
-result start end = length $ filter firstInMonth (allSundaysBetween firstSunday start end)
+numberOfSundaysAtTheFirstDayOfMonth :: Date -> Date -> Int
+numberOfSundaysAtTheFirstDayOfMonth start end = length $ filter firstInMonth (allSundaysBetween firstSunday start end)
 
 main :: IO ()
-main = print ("Result should be: " ++ show (171 :: Integer) ++ ", is: " ++ show (result startDate endDate))
+main = print ("Expected: " ++ show (171 :: Integer) ++ ", actual: " ++ show (numberOfSundaysAtTheFirstDayOfMonth startDate endDate))
