@@ -8,28 +8,19 @@
 --   2 + 2 + 2 + 2 + 2
 -- What is the first value which can be written as the sum of primes in over five thousand different ways?
 
+sumCount :: [Integer] -> Integer -> Integer
+sumCount [] _ = 0
+sumCount primes left
+  | head primes > left = 0
+  | head primes < left = sumCount primes (left-head primes) + sumCount (tail primes) left
+  | otherwise = 1 + sumCount (tail primes) left
 
-solutions :: Integer -> [Integer] -> Integer -> Integer
-solutions _ [] acc = acc
-solutions left primes acc
-  | head primes > left = solutions left (tail primes) acc
-  | head primes < left = solutions (left-head primes) primes acc + solutions left (tail primes) acc
-  | otherwise = (acc+1) + solutions left (tail primes) acc
-
-solve :: [Integer] -> Integer -> Integer -> Integer
-
-solve allPrimes maxSolutions current = if last allPrimes < current then -1 else (
-  let
-    primes = reverse $ takeWhile (<current) allPrimes
-    numberOfSolutions = solutions current primes 0
-  in
-    if numberOfSolutions >= maxSolutions then current else solve allPrimes maxSolutions (current+1)
-  )
-
+sumOfPrimesOfXDifferentWays :: [Integer] -> Integer -> [Integer]
+sumOfPrimesOfXDifferentWays primes solutionsNumb = filter (\n -> (sumCount primes n) > solutionsNumb) [1,2..]
 
 main :: IO ()
 main = do
   f <- readFile "../primes/primes"
   let primes = [read s :: Integer | s <- lines f]
 
-  print ("Result should be: " ++ show (71 :: Integer) ++ ", is: " ++ show (solve primes 5000 3))
+  print ("Expected: " ++ show (71 :: Integer) ++ ", actual: " ++ show (head $ sumOfPrimesOfXDifferentWays primes 5000))
