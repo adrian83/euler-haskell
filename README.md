@@ -7,4 +7,4 @@ Solutions to some programming exercises from [Project Euler](https://projecteule
 
 #### Refactoring needed 45, 47
 #### Optimization needed: 14, 23
-#### Not working: 
+#### Not working:

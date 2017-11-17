@@ -13,10 +13,10 @@ factorial :: Integer -> Integer
 factorial 0 = 1
 factorial n = n * factorial (n-1)
 
-result :: Integer -> Integer
-result number = sum $ digits $ factorial number
+digitsSum :: Integer -> Integer
+digitsSum number = sum $ digits number
 
 main :: IO ()
 main = do
-  print ("Result should be: " ++ show (27 :: Integer) ++ ", is: " ++ show (result 10))
-  print ("Result should be: " ++ show (647 :: Integer) ++ ", is: " ++ show (result 100))
+  --print ("Expected: " ++ show (27 :: Integer) ++ ", actual: " ++ show (digitsSum $ factorial 10))
+  print ("Expected: " ++ show (648 :: Integer) ++ ", actual: " ++ show (digitsSum $ factorial 100))

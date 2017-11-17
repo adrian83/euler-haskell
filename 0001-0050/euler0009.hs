@@ -6,35 +6,19 @@
 -- There exists exactly one Pythagorean triplet for which a + b + c = 1000.
 -- Find the product abc.
 
-tProd :: (Integer, Integer, Integer) -> Integer
-tProd (a,b,c) = a*b*c
+triplets :: Integer -> [(Integer, Integer, Integer)]
+triplets maxC = [(a,b,c) | c <- [3,4..maxC], b <- [2,3..(c-1)], a <- [1,2..(b-1)]]
 
-result :: Integer -> Integer
-result circuit = tProd $ head $ calculate circuit (quot circuit 2) 0 0 []
+pythagorean :: (Integer, Integer, Integer) -> Bool
+pythagorean (a, b, c) = (a ^ 2) + (b ^ 2) == (c ^ 2)
 
-calculateA :: Integer -> Integer -> (Integer, Bool)
-calculateA c b
-  | a2 /= a^(2::Integer) || a > b = (a, False)
-  | otherwise = (a, True)
-  where
-    a2 = c^(2::Integer) - b^(2::Integer)
-    a = floor $ sqrt $ fromIntegral a2
+hasCircuit :: Integer -> (Integer, Integer, Integer) -> Bool
+hasCircuit val (a, b, c) = val == (a + b + c)
 
-calculate :: Integer -> Integer -> Integer -> Integer -> [(Integer, Integer, Integer)] -> [(Integer, Integer, Integer)]
-calculate circuit maxC c b acc
-  | maxC == c = acc
-  | b <= halfC = calculate circuit maxC c (halfC+1) acc
-  | b >= c = calculate circuit maxC (c+1) 0 acc
-  | correctA && a < b && a + b + c == circuit = calculate circuit maxC (c+1) 0 ((c,b,a):acc)
-  | otherwise = calculate circuit maxC c (b+1) acc
-  where
-    halfC = quot c 2
-    aTuple = calculateA c b
-    a = fst aTuple
-    correctA = snd aTuple
-
+pythagoreanTripletWithCircuit :: Integer -> Integer
+pythagoreanTripletWithCircuit circuit = head $ (map (\(a,b,c) -> a*b*c) (filter pythagorean (filter (hasCircuit circuit) (triplets circuit))))
 
 main :: IO ()
 main = do
-  print ("Result should be: " ++ show (60 :: Integer) ++ ", is: " ++ show (result 12))
-  print ("Result should be: " ++ show (31875000 :: Integer) ++ ", is: " ++ show (result 1000))
+  --print ("Expected: " ++ show (60 :: Integer) ++ ", actual: " ++ show (pythagoreanTripletWithCircuit 12))
+  print ("Expected: " ++ show (31875000 :: Integer) ++ ", actual: " ++ show (pythagoreanTripletWithCircuit 1000))
