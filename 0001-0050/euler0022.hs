@@ -54,10 +54,9 @@ lettersSum str = sum $ map letterValue str
 removeQuotationMarks :: String -> String
 removeQuotationMarks str = tail $ init str
 
-namesProduct :: [String] -> Integer -> Integer -> Integer
-namesProduct [] _ acc = acc
-namesProduct names index acc = namesProduct (tail names) (index+1) (acc + (index * lettersSum (head names)))
-
+namesProduct :: [String] -> Integer -> Integer
+namesProduct [] _ = 0
+namesProduct names index = (index * lettersSum (head names)) + (namesProduct (tail names) (index+1))
 
 main :: IO ()
 main = do
@@ -65,4 +64,4 @@ main = do
   let namesWithQuotationMarks = splitBy (==',') f
   let names = map removeQuotationMarks namesWithQuotationMarks
 
-  print ("Result should be: " ++ show (871198282 :: Integer) ++ ", is: " ++ show (namesProduct (sort names) 1 0))
+  print ("Expected: " ++ show (871198282 :: Integer) ++ ", actual: " ++ show (namesProduct (sort names) 1))

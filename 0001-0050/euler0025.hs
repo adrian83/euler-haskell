@@ -32,6 +32,5 @@ fibonacciCalculator acc maxNumber
 fibonaccis :: Integer -> [Integer]
 fibonaccis maxNumber = [fst t | t <- fibonacciCalculator [firstFibonacci] maxNumber ]
 
-
 main :: IO ()
-main = print ("Result should be: " ++ show (4782 :: Integer) ++ ", is: " ++ show (length $ fibonaccis (10^999)))
+main = print ("Expected: " ++ show (4782 :: Integer) ++ ", actual: " ++ show (length $ fibonaccis (10^999)))

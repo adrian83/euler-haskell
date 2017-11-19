@@ -18,25 +18,25 @@
 -- Find the sum of all the positive integers which cannot be written as the
 -- sum of two abundant numbers.
 
+import Data.List
 
-isSumOfTwoAbundant :: Integer -> [Integer] -> Bool
-isSumOfTwoAbundant number abundantNumbers
-  | null abundantNumbers                                   = False
-  | head abundantNumbers > number                          = False
-  | (number - head abundantNumbers) `elem` abundantNumbers = True
-  | otherwise = isSumOfTwoAbundant number (tail abundantNumbers)
+removeDuplicates :: [Integer] -> [Integer]
+removeDuplicates [a] = [a]
+removeDuplicates [a,b] = if a == b then [a] else [a,b]
+removeDuplicates (a:b:xs) = if a == b then (removeDuplicates (b:xs)) else a:(removeDuplicates (b:xs))
 
-result :: Integer -> [Integer] -> Integer
-result maxx abundantNumbers =
-  let n = length abundantNumbers
+sumsOfTwoAbundants :: [Integer] -> Integer -> [Integer]
+sumsOfTwoAbundants [] _ = []
+sumsOfTwoAbundants abundants maxx = filter (<=maxx) (map (\n -> head abundants + n) abundants) ++ sumsOfTwoAbundants (tail abundants) maxx
 
-  sum [ i | i <- [1,2..maxx], not $ isSumOfTwoAbundant i abundantNumbers]
+sumOfAllWhichAreNotTwoAbundantsSum :: [Integer] -> Integer -> Integer
+sumOfAllWhichAreNotTwoAbundantsSum abundants maxx = sum [1,2..maxx] - sum (removeDuplicates $ sort $ sumsOfTwoAbundants abundants (maxx))
 
 main :: IO ()
---main = print ("Result should be: " ++ show (4179871 :: Integer) ++ ", is: " ++ show (result 28123))
 main = do
+  let maxx = 28123
 
   f <- readFile "../abundants/abundants"
-  let abundants = filter (\a -> a < 28123) [read s :: Integer | s <- lines f]
+  let abundants = filter (<=maxx) [read s :: Integer | s <- lines f]
 
-  print ("Result should be: " ++ show (4179871 :: Integer) ++ ", is: " ++ show (result 28123 abundants))
+  print ("Expected: " ++ show (4179871 :: Integer) ++ ", actual: " ++ show (sumOfAllWhichAreNotTwoAbundantsSum abundants maxx))

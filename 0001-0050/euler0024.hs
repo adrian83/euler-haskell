@@ -10,11 +10,11 @@
 
 import Data.List
 
-sortedPermutations :: [a] -> [[a]]
+sortedPermutations :: String -> [String]
 sortedPermutations list = sort $ permutations list
 
-elemOfSortedPermutations :: [a] -> Integer -> a
+elemOfSortedPermutations :: String -> Int -> String
 elemOfSortedPermutations list index = (sortedPermutations list) !! (index - 1)
 
 main :: IO ()
-main = print ("Expected: " ++ show (2783915460 :: Integer) ++ ", actual: " ++ show (elemOfSortedPermutations "0123456789" 1000000))
+main = print ("Expected: " ++ show (2783915460 :: Integer) ++ ", actual: " ++ (elemOfSortedPermutations "0123456789" 1000000))

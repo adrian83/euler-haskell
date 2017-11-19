@@ -12,26 +12,30 @@
 dividors :: Integer -> [Integer]
 dividors a = [ i | i <- [1,2..(quot a 2)], mod a i == 0]
 
-result :: Integer -> Integer -> Integer
-result 0 acc = acc
-result a acc =
-  let
-    b = sum (dividors a)
-  in
-    if b < 10000 && a < 10000 && a /= b && a == (sum (dividors b)) then result (a-1) (acc+a+b) else result (a-1) acc
-
-isAmicable :: Integer -> Bool
+isAmicable :: Integer -> Maybe (Integer, Integer)
 isAmicable number =
   let
     divs = dividors number
     divsSum = sum divs
     divsDivs = dividors divsSum
     sumDivsDivs = sum divsDivs
-  in
-    number /= divsSum && sumDivsDivs == number
+    isAm = number /= divsSum && sumDivsDivs == number
+  in if isAm then Just (number, divsSum) else Nothing
 
-result2 :: Integer -> [Integer]
-result2 maxNumber = [i | i <- [2,3..maxNumber], isAmicable i]
+merge :: Integer -> Integer -> [Integer] -> [Integer]
+merge a b amcbs =
+  if a `elem` amcbs
+    then if b `elem` amcbs then amcbs else b:amcbs
+    else if b `elem` amcbs then a:amcbs else a:b:amcbs
+
+amicables :: Integer -> [Integer]
+amicables 0 = []
+amicables number = case isAmicable number of
+      Nothing -> amicables (number - 1)
+      Just (f, s) -> merge f s (amicables (number - 1))
+
+sumOfAmicables :: Integer -> Integer
+sumOfAmicables maxNumber = sum $ amicables maxNumber
 
 main :: IO ()
-main = print ("Result should be: " ++ show (31626 :: Integer) ++ ", is: " ++ show (sum $ result2 10000))
+main = print ("Expected: " ++ show (31626 :: Integer) ++ ", actual: " ++ show (sumOfAmicables 10000))
