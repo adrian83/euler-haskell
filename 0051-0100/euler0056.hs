@@ -1,4 +1,3 @@
-
 -- https://projecteuler.net/problem=56
 --
 -- A googol (10^100) is a massive number: one followed by one-hundred zeros;
@@ -10,16 +9,11 @@ digits :: (Integral a) => a -> [a]
 digits 0 = []
 digits n = mod n 10 : digits (quot n 10)
 
-digitsSum :: Integer -> Integer
-digitsSum a = sum $ digits a
+genNumbers :: Integer -> Integer -> [Integer]
+genNumbers maxBase maxExponent = [ b ^ e | b <- [1,2..maxBase], e <- [1,2..maxExponent]]
 
-numbers :: [Integer] -> [Integer] -> [Integer] -> [Integer]
-numbers bases exponents acc
-  | null exponents = acc
-  | otherwise = numbers bases (tail exponents) (acc ++ map (^ head exponents) bases)
-
-result :: Integer -> Integer -> Integer
-result maxBase maxExponent = maximum $ map digitsSum (numbers [0,1..maxBase] [0,1..maxExponent] [])
+biggestDigitsSum :: [Integer] -> Integer
+biggestDigitsSum numbers = maximum (map sum (map digits numbers))
 
 main :: IO ()
-main = print ("Result should be: " ++ show (972 :: Integer) ++ ", is: " ++ show (result 100 100))
+main = print ("Expected: " ++ show (972 :: Integer) ++ ", actual: " ++ show (biggestDigitsSum (genNumbers 100 100)))
