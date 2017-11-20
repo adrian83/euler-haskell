@@ -13,8 +13,8 @@ result :: Integer -> [Integer] -> Integer -> Integer
 result _ [] acc = acc
 result left coinss acc
   | head coinss > left = result left (tail coinss) acc
-  | head coinss < left = result (left-head coinss) coinss acc + result left (tail coinss) acc
-  | otherwise = (acc+1) + result left (tail coinss) acc
+  | head coinss < left = result (left - head coinss) coinss acc + result left (tail coinss) acc
+  | otherwise          = (acc + 1) + result left (tail coinss) acc
 
 main :: IO ()
-main = print ("Result should be: " ++ show (73682 :: Integer) ++ ", is: " ++ show (result 200 coins 0))
+main = print ("Expected: " ++ show (73682 :: Integer) ++ ", actual: " ++ show (result 200 coins 0))
