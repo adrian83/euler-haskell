@@ -13,19 +13,20 @@
 import Data.List
 
 powers :: Integer -> Integer -> [Integer]
-powers number maxExponent = if maxExponent == 2 then [number^(2::Integer)] else number^maxExponent : powers number (maxExponent-1)
+powers number 2 = [number^(2::Integer)]
+powers number maxExponent =  number^maxExponent : powers number (maxExponent-1)
 
 allPowers :: Integer -> Integer -> [Integer]
-allPowers maxNumber maxExponent = if maxNumber == 2 then powers maxNumber maxExponent else powers maxNumber maxExponent ++ allPowers (maxNumber-1) maxExponent
+allPowers 2 exnt = powers 2 exnt
+allPowers maxNumber maxExponent = powers maxNumber maxExponent ++ allPowers (maxNumber-1) maxExponent
 
 removeDuplicates :: [Integer] -> [Integer]
 removeDuplicates [a] = [a]
-removeDuplicates l =
-  let
-    f = head l
-    t = tail l
-  in
-    if f == head t then removeDuplicates (f : tail t) else f : removeDuplicates t
+removeDuplicates [a,b] = if a == b then [a] else [a,b]
+removeDuplicates (a:b:xs) = if a == b then (removeDuplicates (b:xs)) else a:(removeDuplicates (b:xs))
+
+distinctTerms :: Integer -> Integer -> Int
+distinctTerms maxNumber maxExponent = length $ removeDuplicates $ sort $ allPowers maxNumber maxExponent
 
 main :: IO ()
-main = print ("Result should be: " ++ show (9183 :: Integer) ++ ", is: " ++ show (length $ removeDuplicates $ sort $ allPowers 100 100))
+main = print ("Expected: " ++ show (9183 :: Integer) ++ ", actual: " ++ show (distinctTerms 100 100))

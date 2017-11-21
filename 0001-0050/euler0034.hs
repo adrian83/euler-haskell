@@ -21,4 +21,4 @@ result :: Integer -> Integer
 result maxNumber = sum [i | i <- [3,4..maxNumber], i == factorialsSum (digits i)]
 
 main :: IO ()
-main = print ("Result should be: " ++ show (40730 :: Integer) ++ ", is: " ++ show (result $ factorial 9))
+main = print ("Expected: " ++ show (40730 :: Integer) ++ ", actual: " ++ show (result 50000)) 

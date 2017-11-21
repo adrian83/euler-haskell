@@ -13,13 +13,11 @@ digits :: Integer -> [Integer]
 digits 0 = []
 digits i = mod i 10 : digits (quot i 10)
 
-isSumOfItsDigits :: Integer -> Bool
-isSumOfItsDigits a = a == sum [i^(5::Integer) | i <- digits a]
+isSumOfItsDigits :: Integer -> Integer -> Bool
+isSumOfItsDigits number power = number == sum [i^(power::Integer) | i <- digits number]
 
-
-result :: Integer -> [Integer]
-result maxNumber = [i | i <- [2,3..maxNumber], isSumOfItsDigits i]
-
+result :: Integer -> Integer -> [Integer]
+result maxNumber power = [i | i <- [2,3..maxNumber], isSumOfItsDigits i power]
 
 main :: IO ()
-main = print ("Result should be: " ++ show (443839 :: Integer) ++ ", is: " ++ show (sum $ result 1000000))
+main = print ("Expected: " ++ show (443839 :: Integer) ++ ", actual: " ++ show (sum $ result 1000000 5))

@@ -1,4 +1,4 @@
--- https://projecteuler.net/problem=25
+-- https://projecteuler.net/problem=28
 --
 -- Starting with the number 1 and moving to the right in a clockwise
 -- direction a 5 by 5 spiral is formed as follows:
@@ -11,14 +11,18 @@
 -- What is the sum of the numbers on the diagonals in a 1001 by 1001 spiral
 -- formed in the same way?
 
-result :: Integer -> Integer -> Integer -> Integer -> [Integer] -> [Integer]
-result maxLevel level step curStep acc
-  | level > maxLevel = acc
-  | curStep == 0     = result maxLevel (level+2) (step+2) 4 acc
-  | otherwise        = result maxLevel level step (curStep-1) ((head acc + step) : acc)
 
+walk :: Integer -> Integer
+walk 1 = 1
+walk currentLevel
+  | mod currentLevel 2 == 0 = error "invalid level number (must be odd)"
+  | otherwise =
+    let
+      maxOnThisLevel = currentLevel ^ 2
+      edgesValues = map (\n -> maxOnThisLevel - (n * (currentLevel - 1))) [0,1,2,3]
+    in sum edgesValues + (walk (currentLevel - 2))
 
 main :: IO ()
 main = do
-  print ("Result should be: " ++ show (101 :: Integer) ++ ", is: " ++ show (sum $ result 5 3 2 4 [1]))
-  print ("Result should be: " ++ show (669171001 :: Integer) ++ ", is: " ++ show (sum $ result 1001 3 2 4 [1]))
+  --print ("Expected: " ++ show (101 :: Integer) ++ ", actual: " ++ show (walk 5))
+  print ("Expected: " ++ show (669171001 :: Integer) ++ ", actual: " ++ show (walk 1001))

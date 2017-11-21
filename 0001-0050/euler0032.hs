@@ -38,13 +38,11 @@ unique :: [Integer] -> [Integer] -> [Integer]
 unique [] acc = acc
 unique numbers acc = if (head numbers) `elem` acc then unique (tail numbers) acc else unique (tail numbers) ((head numbers):acc)
 
-
 bounds :: [([Integer], [Integer])]
 bounds = [([1..9],[1000..9999]), ([10..99],[100..999])]
 
 result :: [([Integer], [Integer])] -> Integer
 result bnds = sum (unique [ axb p | p <- (filter pandigital (products bnds))] [])
-
 
 main :: IO ()
 main = do
