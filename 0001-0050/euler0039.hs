@@ -14,12 +14,10 @@ data Solution = Solution {
   } deriving (Show, Eq)
 
 instance Ord Solution where
-  compare s1 s2 
+  compare s1 s2
     | count s1 > count s2 = LT
     | count s1 < count s2 = GT
     | otherwise = EQ
-
-
 
 rightAngle :: (Integer, Integer, Integer) -> Bool
 rightAngle (a, b, c) = (a * a) + (b * b) == (c * c)
@@ -33,9 +31,8 @@ rightAngleTriangles perimiter = filter rightAngle $ triangles perimiter
 solutions :: Integer -> [Solution]
 solutions maxPerimeter = [Solution {perimiter = p, count = length $ rightAngleTriangles p} | p <- [3..maxPerimeter]]
 
-result ::Integer -> Solution
-result maxPerimeter = head $ sort $ solutions maxPerimeter
+bestSolution ::Integer -> Solution
+bestSolution maxPerimeter = head $ sort $ solutions maxPerimeter
 
 main :: IO ()
-main = do
-  print ( result 1000 )
+main = print ("Expected: " ++ show (840 :: Integer) ++ ", actual: " ++ show (perimiter $ bestSolution 1000))

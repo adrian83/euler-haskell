@@ -9,35 +9,44 @@
 import Data.List
 
 isPrime :: [Integer] -> Integer -> Bool
-isPrime primes number = number `elem` primes
+isPrime [] _ = False
+isPrime primes number
+  | number > 7 && (mod number 2 == 0 || mod number 3 == 0 || mod number 5 == 0 || mod number 7 == 0) = False
+  | head primes == number = True
+  | head primes > number  = False
+  | otherwise             = isPrime (tail primes) number
+
+removeTrailingZeros :: String -> String
+removeTrailingZeros "" = ""
+removeTrailingZeros str
+  | head str == '0' = removeTrailingZeros (tail str)
+  | otherwise       = str
 
 trimR :: Integer -> [Integer]
 trimR number
-  | number == 0 || smallerNumber == 0 = []
-  | otherwise = smallerNumber : trimR smallerNumber
-  where
-    numberLen = length (show number)
-    smallerNumber = mod number (10^ (numberLen-1))
+  | number < 10 = []
+  | otherwise   = smaller : trimR smaller
+    where smaller = read (init (show number)) :: Integer
 
 trimL :: Integer -> [Integer]
 trimL number
-  | number == 0 || smallerNumber == 0 = []
-  | otherwise = smallerNumber : trimL smallerNumber
-  where
-    smallerNumber = quot number 10
+  | number < 10 = []
+  | str == "" = []
+  | otherwise = (read str :: Integer) : trimL (read str :: Integer)
+    where str = removeTrailingZeros $ tail (show number)
 
-perf :: Integer -> [Integer]
-perf number = (number : trimR number) ++ trimL number
+numbersFromBase :: Integer -> [Integer]
+numbersFromBase number = number : (trimR number ++ trimL number)
 
-specialPrimes :: [Integer] -> [Integer]
-specialPrimes primes = [i | i <- primes, all (isPrime primes) (sort $ perf i) ]
+truncatablePrimes :: [Integer] -> [Integer]
+truncatablePrimes primes = [i | i <- primes, all (isPrime primes) (sort $ numbersFromBase i) ]
 
-result :: [Integer] -> Integer
-result primes = sum $ filter (>10) (specialPrimes primes)
+sumOfTruncatablePrimes :: [Integer] -> Integer
+sumOfTruncatablePrimes primes = sum $ filter (>10) (truncatablePrimes primes)
 
 main :: IO ()
 main = do
   f <- readFile "../primes/primes"
   let primes = [read s :: Integer | s <- lines f]
 
-  print ("Result should be: " ++ show (748317 :: Integer) ++ ", is: " ++ show (result primes))
+  print ("Expected: " ++ show (748317 :: Integer) ++ ", actual: " ++ show (sumOfTruncatablePrimes primes))
