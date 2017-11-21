@@ -7,38 +7,34 @@
 
 import Data.List
 
-removeDuplicates :: (Eq a) => [a] -> [a]
-removeDuplicates [a] = [a]
-removeDuplicates elements = if f == head t then removeDuplicates (f : tail t) else f : removeDuplicates t
-  where
-    f = head elements
-    t = tail elements
+pandigital :: Integer -> Bool
+pandigital number = case length sorted of
+          0 -> False
+          1 -> sorted == "1"
+          2 -> sorted == "12"
+          3 -> sorted == "123"
+          4 -> sorted == "1234"
+          5 -> sorted == "12345"
+          6 -> sorted == "123456"
+          7 -> sorted == "1234567"
+          8 -> sorted == "12345678"
+          9 -> sorted == "123456789"
+          _ -> False
+          where sorted = sort $ show number
 
-
-isPandigital :: Integer -> Bool
-isPandigital number
-  | '0' `elem` numberAsStr = False
-  | (orgLen == length uniqueDigits) && (last uniqueDigits == head (show orgLen)) = True
-  | otherwise = False
-  where
-    numberAsStr = show number
-    orgLen = length numberAsStr
-    uniqueDigits = removeDuplicates $ sort numberAsStr
-
-
-result :: Integer -> (Integer -> Bool) -> [Integer]
-result maxNumber checkIfPrime = [i | i <- [maxNumber,maxNumber-1..2], isPandigital i && checkIfPrime i]
+biggestPandigital :: Integer -> (Integer -> Bool) -> Integer
+biggestPandigital maxNumber prime = head [i | i <- [maxNumber,maxNumber-1..2], pandigital i && prime i]
 
 isPrime :: [Integer] -> Integer -> Bool
+isPrime [] _ = False
 isPrime primes number
-  | null primes || head primes > number = True
-  | mod number (head primes) == 0       = False
-  | otherwise                           = isPrime (tail primes) number
-
+  | head primes > number = False
+  | head primes == number = True
+  | otherwise  = isPrime (tail primes) number
 
 main :: IO ()
 main = do
   f <- readFile "../primes/primes"
   let primes = [read s :: Integer | s <- lines f]
 
-  print ("Result should be: " ++ show (7652413 :: Integer) ++ ", is: " ++ show (head $ result 7654321 (isPrime primes)))
+  print ("Expected: " ++ show (7652413 :: Integer) ++ ", actual: " ++ show (biggestPandigital 7654321 (isPrime primes)))

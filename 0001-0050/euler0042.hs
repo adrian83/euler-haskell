@@ -60,13 +60,11 @@ trianglesUpTo maks = [ quot (i * (i+1)) 2 | i <- [1,2..maks]]
 isTriangle :: [Integer] -> Integer -> Bool
 isTriangle triangles e = e `elem` triangles
 
-result :: [String] -> Int
-result names =
-  let
+numberOfTriangleWords :: [String] -> Int
+numberOfTriangleWords names = length $ filter (isTriangle triangles) values
+  where
     values = wordsValues names
     triangles = trianglesUpTo $ maximum values
-  in
-    length $ filter (isTriangle triangles) values
 
 main :: IO ()
 main = do
@@ -74,4 +72,4 @@ main = do
   let namesWithQuotationMarks = splitBy (==',') f
   let names = map removeQuotationMarks namesWithQuotationMarks
 
-  print ("Result should be: " ++ show (162 :: Integer) ++ ", is: " ++ show (result names))
+  print ("Expected: " ++ show (162 :: Integer) ++ ", actual: " ++ show (numberOfTriangleWords names))
