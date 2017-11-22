@@ -26,18 +26,26 @@ rotatedPrimes :: [Integer] -> [[Integer]]
 rotatedPrimes primes = map permutation primes
 
 allPrimes :: (Integer -> Bool) -> [Integer] -> Bool
-allPrimes prime numbers = all prime numbers
+allPrimes prime numbers = all prime (sort numbers)
+
+shouldRotate :: Integer -> Bool
+shouldRotate number = if number == 2
+  then True
+  else not $ any (\ch -> ch `elem` ['2','4','6','8','0']) (show number)
 
 circularPrimes :: (Integer -> Bool) -> [Integer] -> [Integer]
-circularPrimes prime primes = [head rotated | rotated <- rotatedPrimes primes, allPrimes prime rotated ]
+circularPrimes prime primes = [head rotated | rotated <- rotatedPrimes (filter shouldRotate primes), allPrimes prime rotated ]
 
-numberOfCircularPrimes :: (Integer -> Bool) -> [Integer] -> Int
-numberOfCircularPrimes prime primes = length $ circularPrimes prime primes
+--numberOfCircularPrimes :: (Integer -> Bool) -> [Integer] -> Int
+--numberOfCircularPrimes prime primes = length $ circularPrimes prime primes
+
+numberOfCircularPrimes :: [Integer] -> Int
+numberOfCircularPrimes primes = length $ circularPrimes (isPrime primes) primes
 
 main :: IO ()
 main = do
   f <- readFile "../primes/primes"
   let primes = [read s :: Integer | s <- lines f]
 
-  --print ("Expected: " ++ show (13 :: Integer) ++ ", actual: " ++ show (numberOfCircularPrimes (isPrime primes) (filter (<100) primes)))
-  print ("Expected: " ++ show (55 :: Integer) ++ ", actual: " ++ show (numberOfCircularPrimes (isPrime primes) (filter (<1000000) primes)))
+  --print ("Expected: " ++ show (13 :: Integer) ++ ", actual: " ++ show (numberOfCircularPrimes (filter (<100) primes)))
+  print ("Expected: " ++ show (55 :: Integer) ++ ", actual: " ++ show (numberOfCircularPrimes (filter (<1000000) primes)))
