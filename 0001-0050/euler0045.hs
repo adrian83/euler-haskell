@@ -25,25 +25,17 @@ stateUntil curState stateGen stopF =
   if (stopF (snd curState)) then curState
   else (if (stopF (snd (stateGen curState))) then stateGen curState else stateUntil (stateGen curState) stateGen stopF)
 
-result :: Integer -> [Integer] -> [Integer] -> [Integer] -> [Integer]
-result index tr pe he =
+trianglesThatArePentagonalAndHexagonal :: Integer -> [Integer] -> [Integer] -> [Integer] -> [Integer]
+trianglesThatArePentagonalAndHexagonal index tr pe he =
   let t = triangle index
       p = pentagonal index
       h = hexagonal index
       newHe = h : he
       newPe = p : pe
   in if elem t newPe && elem t newHe
-    then t : (result (index+1) (t : tr) newPe newHe)
-    else result (index+1) (t : tr) newPe newHe
-
-
+    then t : (trianglesThatArePentagonalAndHexagonal (index+1) (t : tr) newPe newHe)
+    else trianglesThatArePentagonalAndHexagonal (index+1) (t : tr) newPe newHe
 
 
 main :: IO ()
-main = do
-
-  print(triangle 4)
-  print(pentagonal 4)
-  print(hexagonal 4)
-
-  print( head (tail (tail $ result 1 [] [] [])))
+main = print ("Expected: " ++ show (1533776805 :: Integer) ++ ", actual: " ++ show ((trianglesThatArePentagonalAndHexagonal 1 [] [] []) !! 2))

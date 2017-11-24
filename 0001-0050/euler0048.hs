@@ -5,10 +5,10 @@
 
 sumOfPowers :: Integer -> Integer
 sumOfPowers 1 = 1
-sumOfPowers number = number^number + sumOfPowers (number-1)
+sumOfPowers number = number ^ number + sumOfPowers (number - 1)
 
-result :: Integer -> Integer -> Integer
-result digits lenOfSum = mod (sumOfPowers lenOfSum) (10^digits)
+lastDigits :: Integer -> Integer -> Integer
+lastDigits number numberOfDigits = mod number (10 ^ numberOfDigits)
 
 main :: IO ()
-main = print ("Result should be: " ++ show (9110846700 :: Integer) ++ ", is: " ++ show (result 10 1000))
+main = print ("Expected: " ++ show (9110846700 :: Integer) ++ ", actual: " ++ show (lastDigits (sumOfPowers 1000) 10 ))
