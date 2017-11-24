@@ -1,6 +1,6 @@
 -- https://projecteuler.net/problem=36
 --
--- The decimal number, 585 = 10010010012 (binary), is palindromic in both bases.
+-- The decimal number, 585 = 1001001001 (binary), is palindromic in both bases.
 -- Find the sum of all numbers, less than one million, which are palindromic in base 10 and base 2.
 -- (Please note that the palindromic number, in either base, may not include leading zeros.)
 
@@ -24,4 +24,4 @@ sumOfPalindromics :: Integer -> Integer
 sumOfPalindromics maxNumber = sum [i | i <- [1,2..maxNumber+1], isPalindromic i]
 
 main :: IO ()
-main = print ("Result should be: " ++ show (872187 :: Integer) ++ ", is: " ++ show (sumOfPalindromics 100000))
+main = print ("Expected: " ++ show (872187 :: Integer) ++ ", actual: " ++ show (sumOfPalindromics 1000000))

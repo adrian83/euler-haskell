@@ -4,45 +4,48 @@
 -- There are thirteen such primes below 100: 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 79, and 97.
 -- How many circular primes are there below one million?
 
-digits :: Integer -> [Integer]
-digits 0 = []
-digits n = (mod n 10) : digits (quot n 10)
-
-toNumber :: Integer -> [Integer] -> Integer
-toNumber _ [] = 0
-toNumber wyk digits  = ((head digits)*10^wyk) + toNumber (wyk+1) (tail digits)
-
-rotate :: [Integer] -> Int -> [[Integer]]
-rotate _ 0 = []
-rotate l rotCount =
-  let
-    f = (tail l ++ [head l])
-  in
-    f : rotate f (rotCount-1)
-
-
+import Data.List
 
 isPrime :: [Integer] -> Integer -> Bool
-isPrime primes number = number `elem` primes
+isPrime [] _ = False
+isPrime primes number
+  | number > 7 && (mod number 2 == 0 || mod number 3 == 0 || mod number 5 == 0 || mod number 7 == 0) = False
+  | head primes == number = True
+  | head primes > number  = False
+  | otherwise             = isPrime (tail primes) number
 
+rot :: String -> Int -> Int -> [String]
+rot _ _ 0 = []
+rot str len count = (take len str) : rot (tail str) len (count-1)
 
-perf :: Integer -> [Integer]
-perf numb =
-  let
-    d = digits numb
-    toNumber2 = toNumber 0
-  in
-    map (toNumber2) (rotate d (length d))
+permutation :: Integer -> [Integer]
+permutation number = map (\n -> read n :: Integer) (rot (cycle (show number)) rotations rotations)
+  where rotations = length (show number)
 
+rotatedPrimes :: [Integer] -> [[Integer]]
+rotatedPrimes primes = map permutation primes
 
+allPrimes :: (Integer -> Bool) -> [Integer] -> Bool
+allPrimes prime numbers = all prime (sort numbers)
 
-result :: [Integer] -> Int
-result primes = length [i | i <- primes, all (isPrime primes) (perf i) ]
+shouldRotate :: Integer -> Bool
+shouldRotate number = if number == 2
+  then True
+  else not $ any (\ch -> ch `elem` ['2','4','6','8','0']) (show number)
+
+circularPrimes :: (Integer -> Bool) -> [Integer] -> [Integer]
+circularPrimes prime primes = [head rotated | rotated <- rotatedPrimes (filter shouldRotate primes), allPrimes prime rotated ]
+
+--numberOfCircularPrimes :: (Integer -> Bool) -> [Integer] -> Int
+--numberOfCircularPrimes prime primes = length $ circularPrimes prime primes
+
+numberOfCircularPrimes :: [Integer] -> Int
+numberOfCircularPrimes primes = length $ circularPrimes (isPrime primes) primes
 
 main :: IO ()
 main = do
   f <- readFile "../primes/primes"
   let primes = [read s :: Integer | s <- lines f]
 
-  print ("Result should be: " ++ show (13 :: Integer) ++ ", is: " ++ show (result (filter (<100) primes)))
-  print ("Result should be: " ++ show (55 :: Integer) ++ ", is: " ++ show (result primes))
+  --print ("Expected: " ++ show (13 :: Integer) ++ ", actual: " ++ show (numberOfCircularPrimes (filter (<100) primes)))
+  print ("Expected: " ++ show (55 :: Integer) ++ ", actual: " ++ show (numberOfCircularPrimes (filter (<1000000) primes)))
