@@ -14,64 +14,57 @@
 -- Find the value of d < 1000 for which 1/d contains the longest recurring cycle in its decimal fraction part.
 
 import Data.List
+import Data.List.Split
 
 data Cycle = Cycle {
   number :: Integer,
-  len :: Int
+  len :: Int,
+  str :: String
 } deriving (Show, Eq)
 
+fractionList :: Integer -> Integer -> Integer -> Bool -> String
+fractionList nominator denominator resultSize start
+  | resultSize < 1           = []
+  | nominator == denominator = ['1']
+  | nominator > denominator  = (show (quot nominator denominator)) ++ (if rest == 0 then [] else fractionList ((rest)*10) denominator (resultSize-1) False)
+  | otherwise                = (if start then next else '0' : next)
+  where
+      rest = mod nominator denominator
+      next = fractionList (nominator*10) denominator (resultSize-1) False
 
-instance Ord Cycle where
-  compare s1 s2
-    | len s1 > len s2 = LT
-    | len s1 < len s2 = GT
-    | otherwise = EQ
+chunksEqual :: [String] -> Bool
+chunksEqual [] = True
+chunksEqual [_] = True
+chunksEqual (a:ax) = if a == (head ax) then chunksEqual ax else False
 
-genFract :: Integer -> Integer -> Integer -> Bool -> String
-genFract licznik mianownik size start
-  | size == 0               = ""
-  | licznik == mianownik    = "1"
-  | licznik > mianownik    = show (quot licznik mianownik) ++ if mod licznik mianownik == 0 then "" else genFract ((mod licznik mianownik)*10) mianownik (size-1) False
-  | otherwise = (if start then "" else "0") ++ genFract (licznik*10) mianownik (size-1) False
+splitToSize :: String -> Int -> [String]
+splitToSize str size = if length (last splitted) == size then splitted else init splitted
+  where splitted = chunksOf size str
 
-
-
-recu :: String -> Int -> Maybe Int
-recu [] _ = Nothing
-recu tab len
-  | len > half = Nothing
-  | otherwise = if startsWith (fst spl) (snd spl) then Just len else recu tab (len+1)
-    where
-      half = fromIntegral $ quot (length tab) 2
-      spl = splitAt len tab
-
-fullRecu :: String -> Int
-fullRecu [] = 0
-fullRecu tab =
-  let
-    m = fullRecu (tail tab)
-  in case recu tab 1 of
-    Just n -> max n m
-    Nothing -> m
-
-startsWith :: String -> String -> Bool
-startsWith [] _ = True
-startsWith (a:xa) (b:xb) = a == b && startsWith xa xb
+longestCycle :: Integer -> String -> String -> Int -> Cycle
+longestCycle _ _ [] _ = Cycle{number=0, len=0, str=""}
+longestCycle denominator orgFractionStr fractionStr size =
+            if length splittedFull < 2
+                then longestCycle denominator orgFractionStr (tail fractionStr) 1
+                else
+                  if chunksEqual splittedFull
+                    then Cycle{number=denominator, len=leng, str=orgFractionStr}
+                    else longestCycle denominator orgFractionStr fractionStr (size+1)
+            where
+              splittedFull = splitToSize fractionStr size
+              leng = length (head splittedFull)
 
 
-fractions :: Integer -> [(Integer, String)]
-fractions maxx = [(i, genFract 1 i 800 True) | i <- [2,3..maxx]]
+result :: Integer -> Integer -> Cycle
+result 1 _ = Cycle{number=0, len=0, str=""}
+result denominator maxFractionStrLength = if len this > len next then this else next
+  where
+    next = result (denominator - 1) maxFractionStrLength
+    fractionStr = fractionList 1 denominator maxFractionStrLength True
+    this = longestCycle denominator fractionStr fractionStr 1
 
-lenghts :: [(Integer, String)] -> [Cycle]
-lenghts [] = []
-lenghts (f:tps) = if null $ snd f
-  then Cycle {number=(fst f), len=0} : lenghts tps
-  else
-    let r = fullRecu (snd f)
-  in Cycle {number=(fst f), len=r}: lenghts tps
+
 
 
 main :: IO ()
-main = do
-
-  print(head $ sort $ lenghts $ fractions 1000)
+main = print ("Expected: " ++ show (983 :: Integer) ++ ", actual: " ++ show (number (result 1000 5000)))
