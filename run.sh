@@ -8,8 +8,11 @@ do
 
     for entry in "."/*
     do
-      echo -en "\n<--------> TASK: " "$entry" " <-------->\n"
-      date && runhaskell "$entry" && date
+      if [ ${entry: -3} == ".hs" ]
+      then
+        echo -en "\n<--------> TASK: " "$entry" " <-------->\n"
+        date && runhaskell "$entry" && date
+      fi
     done
 
     cd ..

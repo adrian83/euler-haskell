@@ -16,43 +16,48 @@
 import Data.List
 import Data.List.Split
 
+
 data Cycle = Cycle {
   number :: Integer,
   len :: Int,
   str :: String
 } deriving (Show, Eq)
 
+
 fractionList :: Integer -> Integer -> Integer -> Bool -> String
-fractionList nominator denominator resultSize start
+fractionList numerator denominator resultSize start
   | resultSize < 1           = []
-  | nominator == denominator = ['1']
-  | nominator > denominator  = (show (quot nominator denominator)) ++ (if rest == 0 then [] else fractionList ((rest)*10) denominator (resultSize-1) False)
+  | numerator == denominator = ['1']
+  | numerator > denominator  = (show (quot numerator denominator)) ++ (if rest == 0 then [] else fractionList ((rest)*10) denominator (resultSize-1) False)
   | otherwise                = (if start then next else '0' : next)
   where
-      rest = mod nominator denominator
-      next = fractionList (nominator*10) denominator (resultSize-1) False
+      rest = mod numerator denominator
+      next = fractionList (numerator*10) denominator (resultSize-1) False
+
 
 chunksEqual :: [String] -> Bool
 chunksEqual [] = True
 chunksEqual [_] = True
 chunksEqual (a:ax) = if a == (head ax) then chunksEqual ax else False
 
+
 splitToSize :: String -> Int -> [String]
 splitToSize str size = if length (last splitted) == size then splitted else init splitted
   where splitted = chunksOf size str
 
+
 longestCycle :: Integer -> String -> String -> Int -> Cycle
 longestCycle _ _ [] _ = Cycle{number=0, len=0, str=""}
 longestCycle denominator orgFractionStr fractionStr size =
-            if length splittedFull < 2
-                then longestCycle denominator orgFractionStr (tail fractionStr) 1
-                else
-                  if chunksEqual splittedFull
-                    then Cycle{number=denominator, len=leng, str=orgFractionStr}
-                    else longestCycle denominator orgFractionStr fractionStr (size+1)
-            where
-              splittedFull = splitToSize fractionStr size
-              leng = length (head splittedFull)
+  if length splittedFull < 2
+    then longestCycle denominator orgFractionStr (tail fractionStr) 1
+    else
+      if chunksEqual splittedFull
+        then Cycle{number=denominator, len=leng, str=orgFractionStr}
+        else longestCycle denominator orgFractionStr fractionStr (size+1)
+  where
+    splittedFull = splitToSize fractionStr size
+    leng = length (head splittedFull)
 
 
 result :: Integer -> Integer -> Cycle
@@ -62,8 +67,6 @@ result denominator maxFractionStrLength = if len this > len next then this else 
     next = result (denominator - 1) maxFractionStrLength
     fractionStr = fractionList 1 denominator maxFractionStrLength True
     this = longestCycle denominator fractionStr fractionStr 1
-
-
 
 
 main :: IO ()
