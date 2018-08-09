@@ -42,19 +42,18 @@ chunksEqual (a:ax) = if a == (head ax) then chunksEqual ax else False
 
 
 splitToSize :: String -> Int -> [String]
-splitToSize str size = if length (last splitted) == size then splitted else init splitted
-  where splitted = chunksOf size str
+splitToSize str size = filter (\e -> length e == size) (chunksOf size str)
 
 
 longestCycle :: Integer -> String -> String -> Int -> Cycle
 longestCycle _ _ [] _ = Cycle{number=0, len=0, str=""}
 longestCycle denominator orgFractionStr fractionStr size =
-  if length splittedFull < 2
-    then longestCycle denominator orgFractionStr (tail fractionStr) 1
-    else
-      if chunksEqual splittedFull
-        then Cycle{number=denominator, len=leng, str=orgFractionStr}
-        else longestCycle denominator orgFractionStr fractionStr (size+1)
+  case splittedFull of
+    [] -> longestCycle denominator orgFractionStr (tail fractionStr) 1
+    [_] -> longestCycle denominator orgFractionStr (tail fractionStr) 1
+    (a:ax) -> if chunksEqual splittedFull
+                then Cycle{number=denominator, len=leng, str=orgFractionStr}
+                else longestCycle denominator orgFractionStr fractionStr (size+1)
   where
     splittedFull = splitToSize fractionStr size
     leng = length (head splittedFull)
