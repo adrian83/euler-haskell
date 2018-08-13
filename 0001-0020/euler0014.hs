@@ -11,29 +11,36 @@
 -- Which starting number, under one million, produces the longest chain?
 -- NOTE: Once the chain starts the terms are allowed to go above one million.
 
-import Data.List
-import Data.Ord
+import qualified Data.Map.Lazy as Map
 
 data NumberAndChainLen = NumberAndChainLen {
     number :: Integer,
     chainLen :: Integer
   } deriving (Show, Eq)
 
-instance Ord NumberAndChainLen where
-  compare s1 s2
-    | chainLen s1 > chainLen s2 = LT
-    | chainLen s1 < chainLen s2 = GT
-    | otherwise = EQ
 
-chain :: Integer -> Integer
-chain 1 = 1
-chain number = 1 + (if mod number 2 == 0 then chain (quot number 2) else chain ((3 * number) + 1))
+chain :: Integer -> Map.Map Integer Integer -> Integer
+chain 1 _ = 1
+chain number dict =
+  case Map.lookup number dict of
+    Just n -> n
+    Nothing -> 1 + (if mod number 2 == 0 then chain (quot number 2) dict else chain ((3 * number) + 1) dict)
 
-candidates :: Integer -> [NumberAndChainLen]
-candidates maxNumber = [NumberAndChainLen { number=n, chainLen=(chain n) } | n <- [1,2..maxNumber]]
 
-longestChain :: Integer -> Integer
-longestChain maxNumber = number (head (sort (candidates maxNumber)))
+longestChain :: Integer -> Integer -> Map.Map Integer Integer -> NumberAndChainLen -> Integer
+longestChain current maxNumber cache best
+  | current >= maxNumber = number best
+  | otherwise = longestChain (current+1) maxNumber newCache newBest
+  where
+    chainL = chain current cache
+    newCache = Map.insert current chainL cache
+    cand = NumberAndChainLen { number=current, chainLen=chainL }
+    newBest = if chainLen cand > chainLen best then cand else best
+
+
+result :: Integer -> Integer
+result maxx = longestChain 1 maxx Map.empty (NumberAndChainLen { number=1, chainLen=1 })
+
 
 main :: IO ()
-main = print ("Expected: " ++ show (837799 :: Integer) ++ ", actual: " ++ show (longestChain 1000000))
+main = print ("Expected: " ++ show (837799 :: Integer) ++ ", actual: " ++ show (result 1000000))
