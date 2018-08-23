@@ -6,46 +6,50 @@
 
 import Data.List
 
+rotate :: String -> Int -> [String]
+rotate _ 0 = []
+rotate str count = newStr : (rotate newStr (count - 1))
+  where newStr = (tail str) ++ [head str]
+
+
+isDigitEvenOrZero :: Char -> Bool
+isDigitEvenOrZero c = c == '0' || c == '2' || c == '4' || c == '6' || c == '8'
+
+
+isBuildWithNonEvenDigits :: String -> Bool
+isBuildWithNonEvenDigits [] = True
+isBuildWithNonEvenDigits str = if isDigitEvenOrZero (head str) then False else isBuildWithNonEvenDigits (tail str)
+
+
+allPrimes :: [Integer] -> (Integer -> Bool) -> Bool
+allPrimes [] _ = True
+allPrimes numbers isPrime = if isPrime (head numbers) then allPrimes (tail numbers) isPrime else False
+
+
 isPrime :: [Integer] -> Integer -> Bool
 isPrime [] _ = False
 isPrime primes number
-  | number > 7 && (mod number 2 == 0 || mod number 3 == 0 || mod number 5 == 0 || mod number 7 == 0) = False
-  | head primes == number = True
   | head primes > number  = False
+  | head primes == number = True
   | otherwise             = isPrime (tail primes) number
 
-rot :: String -> Int -> Int -> [String]
-rot _ _ 0 = []
-rot str len count = (take len str) : rot (tail str) len (count-1)
 
-permutation :: Integer -> [Integer]
-permutation number = map (\n -> read n :: Integer) (rot (cycle (show number)) rotations rotations)
-  where rotations = length (show number)
+numberOfCircularPrimes :: [Integer] -> (Integer -> Bool) -> Int
+numberOfCircularPrimes [] _ = 0
+numberOfCircularPrimes primes isPrime
+  | isBuildWithNonEvenDigits primeAsStr = (if allArePrimes then 1 else 0) + numberOfCircularPrimes (tail primes) isPrime
+  | otherwise = (if head primes == 2 then 1 else 0) + numberOfCircularPrimes (tail primes) isPrime
+  where
+    primeAsStr = show (head primes)
+    strs = rotate primeAsStr (length primeAsStr)
+    numbs = sort $ map (\s -> read s :: Integer) strs
+    allArePrimes = allPrimes numbs isPrime
 
-rotatedPrimes :: [Integer] -> [[Integer]]
-rotatedPrimes primes = map permutation primes
-
-allPrimes :: (Integer -> Bool) -> [Integer] -> Bool
-allPrimes prime numbers = all prime (sort numbers)
-
-shouldRotate :: Integer -> Bool
-shouldRotate number = if number == 2
-  then True
-  else not $ any (\ch -> ch `elem` ['2','4','6','8','0']) (show number)
-
-circularPrimes :: (Integer -> Bool) -> [Integer] -> [Integer]
-circularPrimes prime primes = [head rotated | rotated <- rotatedPrimes (filter shouldRotate primes), allPrimes prime rotated ]
-
---numberOfCircularPrimes :: (Integer -> Bool) -> [Integer] -> Int
---numberOfCircularPrimes prime primes = length $ circularPrimes prime primes
-
-numberOfCircularPrimes :: [Integer] -> Int
-numberOfCircularPrimes primes = length $ circularPrimes (isPrime primes) primes
 
 main :: IO ()
 main = do
   f <- readFile "../primes/primes"
   let primes = [read s :: Integer | s <- lines f]
+  let primesToUse = filter (\n -> n < 1000000) primes
 
-  --print ("Expected: " ++ show (13 :: Integer) ++ ", actual: " ++ show (numberOfCircularPrimes (filter (<100) primes)))
-  print ("Expected: " ++ show (55 :: Integer) ++ ", actual: " ++ show (numberOfCircularPrimes (filter (<1000000) primes)))
+  print ("Expected: " ++ show (55 :: Integer) ++ ", actual: " ++ show (numberOfCircularPrimes primesToUse (isPrime primes)))
