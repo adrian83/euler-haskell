@@ -11,71 +11,32 @@
 import Data.List
 import qualified Data.Map.Lazy as Map
 
-data Entry = Entry {
-    number :: Integer,
-    prevs :: [Integer],
-    sums :: [Integer]
-  } deriving (Show)
-
-genEntries :: Integer -> [Entry]
-genEntries 2 = [Entry {number=2, prevs=[4,1], sums=[5,1]}]
-genEntries number =
-  let
-    prevList = genEntries (number - 1)
-    prev = head prevList
-    sq = number ^ 2
-    entry = Entry {number=number, prevs=(sq : prevs prev), sums=((makeSums sq (prevs prev)) ++ sums prev) }
-  in entry : prevList
-
-makeSums :: Integer -> [Integer] -> [Integer]
-makeSums _ [] = []
-makeSums number numbers
-  | newNumber > (10^8) = makeSums newNumber (tail numbers)
-  | otherwise = newNumber : makeSums newNumber (tail numbers)
-  where newNumber = (number + head numbers)
-
 isPalindrom :: (Eq a) => [a] -> Bool
 isPalindrom [] = True
 isPalindrom [_] = True
 isPalindrom (x:xs) = (x == last xs) && isPalindrom (init xs)
 
-digits :: Integer -> [Integer]
-digits 0 = []
-digits n = mod n 10 : digits (quot n 10)
+sumSquares :: Integer -> Integer -> Integer -> [Integer]
+sumSquares maxx numb summ = if n > maxx then [] else n : (sumSquares maxx (numb+1) n)
+    where n = (numb^2)+summ
 
-palindroms :: Integer -> [Integer]
-palindroms maxx = [p | p <- [1,2..maxx], isPalindrom $ digits p]
+squaresSum :: Integer -> Integer -> [Integer]
+squaresSum number maxx
+    | fst t       = []
+    | otherwise   = (snd t) ++ squaresSum (number+1) maxx
+    where
+        x = sumSquares maxx number 0
+        t = case x of
+            [] -> (True, [])
+            [_] -> (True, [])
+            x:xs -> (False, xs)
 
-isSum :: Map.Map Integer Entry -> Integer -> Bool
-isSum dict number = case Map.lookup n dict of
-  Nothing -> False
-  Just e -> number `elem` (sums e)
-  where n = floor (sqrt  $ fromIntegral number)
+unique :: [Integer] -> [Integer] -> [Integer]
+unique [] acc = acc
+unique (x:xs) acc = if elem x acc then unique xs acc else unique xs (x:acc)
 
-palindromsAsSums :: Integer -> (Integer -> Bool) -> [Integer]
-palindromsAsSums maxx isSumOfSqrs = [i | i <- (map (\e -> read e :: Integer) $ filter (\s -> (head s) /= '0') (genPalindroms "1234567890" 8)), isSumOfSqrs i ]
-
-conc :: [String] -> String -> [String]
-conc [] _ = []
-conc l [] = map (\s -> s ++ (reverse s)) l
-conc l [a] = map (\s -> s ++ (a : (reverse s))) l
-conc l (x:xs) = (map (\s -> s ++ (x : (reverse s))) l) ++ (conc l xs)
-
-genPalindroms :: String -> Integer -> [String]
-genPalindroms elems 1 = [x | x <- mapM (const elems) [1] ]
-genPalindroms elems len
-  | odd len = (conc [x | x <- mapM (const elems) [1,2..newLen] ] elems) ++ genPalindroms elems (len-1)
-  | otherwise = (conc [x | x <- mapM (const elems) [1,2..newLen] ] []) ++ genPalindroms elems (len-1)
-    where newLen = quot len 2
+sumOfConsecutiveSquares :: Integer -> Integer
+sumOfConsecutiveSquares maxx = sum $ unique [ i | i <- (squaresSum 1 maxx), isPalindrom (show i)] []
 
 main :: IO ()
-main = do
-
-  --print( conc ["ab", "cd"] "123")
-
-  --print( take 20 $ sort $ (map (\e -> read e :: Integer) $ filter (\s -> (head s) /= '0') (genPalindroms "1234567890" 9)))
-
-  let entries = genEntries (10^4)
-  let entriesMap = Map.fromList (map (\e -> (number e, e)) entries)
-  let fltr = isSum entriesMap
-  print(sum $ palindromsAsSums (10^7) fltr)
+main = print ("Expected: " ++ show (2906969179 :: Integer) ++ ", actual: " ++ show (sumOfConsecutiveSquares (10^8)))
