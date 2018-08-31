@@ -14,7 +14,6 @@
 -- Find the value of d < 1000 for which 1/d contains the longest recurring cycle in its decimal fraction part.
 
 import Data.List
-import Data.List.Split
 
 
 data Cycle = Cycle {
@@ -33,6 +32,10 @@ fractionList numerator denominator resultSize start
   where
       rest = mod numerator denominator
       next = fractionList (numerator*10) denominator (resultSize-1) False
+
+chunksOf :: Int -> [a] -> [[a]]
+chunksOf _ [] = []
+chunksOf n l = (take n l) : (chunksOf n (drop n l))
 
 
 chunksEqual :: [String] -> Bool
