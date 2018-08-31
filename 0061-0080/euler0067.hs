@@ -1,4 +1,4 @@
-import Data.List.Split
+
 
 merge :: [Integer] -> [Integer] -> [Integer]
 merge [] [] = []
@@ -16,8 +16,12 @@ calculateLongestPaths (x:y:xs) = calculateLongestPaths ((merge x y):xs)
 longestPath :: [[Integer]] -> Integer
 longestPath levels = maximum $ calculateLongestPaths levels
 
+splitOn :: Char -> String -> String -> [String]
+splitOn _ [] acc = [acc]
+splitOn c (s:str) acc = if c == s then acc : splitOn c str [] else splitOn c str (acc ++ [s])
+
 toIntegers :: String -> [Integer]
-toIntegers text = map (\s -> read s :: Integer) (splitOn " " text)
+toIntegers text = map (\s -> read s :: Integer) (splitOn ' ' text "")
 
 main :: IO ()
 main = do
