@@ -1,101 +1,115 @@
 -- https://projecteuler.net/problem=27
 --
---
+-- Euler discovered the remarkable quadratic formula:
+--      n2+n+41
+-- It turns out that the formula will produce 40 primes for the consecutive integer
+-- values 0≤n≤39. However, when n=40,402+40+41=40(40+1)+41 is divisible by 41, and
+-- certainly when n=41,412+41+41 is clearly divisible by 41.
+-- The incredible formula n2−79n+1601 was discovered, which produces 80 primes for
+-- the consecutive values 0≤n≤79. The product of the coefficients, −79 and 1601, is −126479.
+-- Considering quadratics of the form:
+--      n2+an+b, where |a|<1000 and |b|≤1000
+--      where |n| is the modulus/absolute value of n
+--      e.g. |11|=11 and |−4|=4
+-- Find the product of the coefficients, a and b, for the quadratic expression that
+-- produces the maximum number of primes for consecutive values of n, starting with n=0.
 
-minA :: Integer
-minA = -999
-maxA :: Integer
-maxA = 999
 
-minB :: Integer
-minB = -1000
-maxB :: Integer
-maxB = 1000
-
-minN :: Integer
-minN = 0
-maxN :: Integer
-maxN = 200
 
 data Solution = Solution {
     len :: Integer,
     a :: Integer,
     b :: Integer
-  } deriving (Show, Eq)
+} deriving (Show, Eq)
+
+instance Ord Solution where
+    compare s1 s2
+        | len s1 > len s2   = GT
+        | len s1 == len s2  = EQ
+        | otherwise         = LT
+
+mulAB :: Solution -> Integer
+mulAB sol = a sol * b sol
+
 
 isPrime :: [Integer] -> Integer -> Bool
 isPrime [] _ = False
 isPrime primes number
-  | number < 2 = False
-  | number > 7 && (mod number 2 == 0 || mod number 3 == 0 || mod number 5 == 0 || mod number 7 == 0 || mod number 11 == 0 || mod number 13 == 0) = False
+  | number < 2            = False
   | head primes == number = True
   | head primes > number  = False
   | otherwise             = isPrime (tail primes) number
 
-isAlmostPrime :: [Integer] -> Integer -> Bool
-isAlmostPrime primes number
-  | number <= -2 = isPrime primes (-number)
-  | number == -1 || number == 0 || number == 1 = True
-  | otherwise = isPrime primes number
+possiblePrime :: Integer -> Bool
+possiblePrime n = n > 0 && ((elem n [0,1,2,3,5,7,11,13,17,19,23,29,31]) || (all (\h -> n `mod` h /= 0) [2,3,5,7,11,13,17,19,23,29,31]))
+
 
 calculate :: Integer -> Integer -> Integer -> Integer
 calculate a b n = (n^2) + (a * n) + b
 
-simplePrimeTest :: Integer -> Bool
-simplePrimeTest n
-  | n < 2 = False
-  | n > 41 && (mod n 2 == 0 || mod n 3 == 0 || mod n 5 == 0 || mod n 7 == 0 || mod n 11 == 0 || mod n 13 == 0 || mod n 17 == 0 || mod n 19 == 0 || mod n 23 == 0 || mod n 29 == 0 || mod n 31 == 0 || mod n 37 == 0 || mod n 41 == 0) = False
-  | n <= 41 && (n == 2 || n == 3 || n == 5 || n == 7 || n == 11 || n == 13 || n ==17 || n == 19 || n == 23 || n == 29 || n == 31 || n == 39 || n == 41) = True
-  | n <= 41 = False
-  | otherwise = True
-
-
-
-divide :: [Integer] -> (Integer -> Bool) -> [Integer] -> [[Integer]]
-divide [] _ acc = [acc]
-divide candidates maybePrime acc =
-  if maybePrime (head candidates)
-    then divide (tail candidates) maybePrime ((head candidates) : acc)
-    else
-      if length acc > 50
-        then acc : (divide (tail candidates) maybePrime [])
-        else divide (tail candidates) maybePrime []
-
-primesInRow :: [Integer] -> (Integer -> Bool) -> Integer -> Integer
-primesInRow [] _ acc = acc
-primesInRow numbers isPrime acc =
-  if isPrime (head numbers)
-    then primesInRow (tail numbers) isPrime (acc + 1)
-    else max acc (primesInRow (tail numbers) isPrime 0)
-
-
-longest :: [[Integer]] -> (Integer -> Bool) -> Integer -> Integer
-longest [] _ cur = cur
-longest [a] isPrime cur = if toInteger (length a) > cur then max cur (primesInRow a isPrime 0) else cur
-longest lol isPrime cur
-    | lngst > current = lngst
-    | otherwise = current
+longest :: (Integer -> Bool) -> [Integer] -> Integer -> Integer -> Integer
+longest _ [] _ best = best
+longest isPrime (n:numbers) current best = longest isPrime numbers newCurrent newBest
     where
-      lngst = longest (tail lol) isPrime cur
-      current = if toInteger (length (head lol)) > cur then max cur (primesInRow (head lol) isPrime 0) else cur
+        newCurrent = if isPrime n then current+1 else 0
+        newBest = max newCurrent best
 
-result :: Integer -> Integer -> Solution -> (Integer -> Bool) -> (Integer -> Bool) -> Solution
-result a b best isPrime testB
-  | a >= maxA && b >= maxB = best
-  | b >= maxB = result (a+1) minB best isPrime testB
-  | not (testB b) = result a (b+1) best isPrime testB
-  | mod a 2 == 0 = result (a+1) b best isPrime testB
-  | lgst > len best = result a (b+1) (Solution {len=lgst, a=a, b=b}) isPrime testB
-  | otherwise = result a (b+1) best isPrime testB
-  where
-    numbers = [calculate a b n | n <- [minN, minN+1..maxN]]
-    possiblePrimes = divide numbers simplePrimeTest []
-    lgst = longest possiblePrimes isPrime (len best)
+splitToPossiblePrimeSlices :: [Integer] -> [Integer] -> Integer -> Integer -> [(Integer, [Integer])]
+splitToPossiblePrimeSlices [] acc accLen maxx = if accLen < maxx then [] else [(accLen, acc)]
+splitToPossiblePrimeSlices (n:numbs) acc accLen maxx
+    | prime = splitToPossiblePrimeSlices numbs (n:acc) (accLen+1) maxx
+    | otherwise = if accLen < maxx then splitToPossiblePrimeSlices numbs [] 0 maxx else (accLen, acc) : (splitToPossiblePrimeSlices numbs [] 0 maxx)
+    where
+        prime = possiblePrime n
+
+
+maxSolution :: [(Integer, [Integer])] -> (Integer -> Bool) -> Integer -> Integer -> Solution -> Solution
+maxSolution [] _ _ _ best = best
+maxSolution (sliceTuple:tuples) isPrime a b best = maxSolution tuples isPrime a b newBest
+    where
+        newBest = if (fst sliceTuple) < len best
+            then best
+            else max Solution {len = (longest isPrime (snd sliceTuple) 0 (len best)), a = a, b = b} best
+
+
+calcForAB :: (Integer -> Bool) -> Integer -> Integer -> Solution -> Solution
+calcForAB isPrime a b best = newLongest
+    where
+        ns = [calculate a b n | n <- [0,1..100]]
+        possiblePrimeSlices = splitToPossiblePrimeSlices ns [] 0 (len best)
+        newLongest = maxSolution possiblePrimeSlices isPrime a b best
+
+calcForBs :: (Integer -> Bool) -> Integer -> [Integer] -> Solution -> Solution
+calcForBs _ _ [] best = best
+calcForBs isPrime a (b:bs) best = calcForBs isPrime a bs this
+    where
+        this = calcForAB isPrime a b best
+
+calcForA :: (Integer -> Bool) -> Integer -> [Integer] -> Solution -> Solution
+calcForA isPrime a bs best = sol
+    where
+        sol = calcForBs isPrime a bs best
+
+calcForAs :: (Integer -> Bool) -> [Integer] -> [Integer] -> Solution -> Solution
+calcForAs _ [] bs best = best
+calcForAs isPrime (a:as) bs best = calcForAs isPrime as bs sol
+    where
+        sol = calcForA isPrime a bs best
+
 
 main :: IO ()
 main = do
-  let maxPrime = (maxN^2) + (maxA*maxN) + maxB
+  let maxN = 100
+  let maxPrime = (maxN^2) + (1000*maxN) + 1000
   f <- readFile "../primes/primes"
   let primes = filter (\n -> n <= maxPrime) [read s :: Integer | s <- lines f]
+  let isPrimeFunc = isPrime primes
 
-  print(result minA minB Solution {len=0, a=0, b=0} (isPrime primes) (isAlmostPrime primes))
+
+
+  let asn = filter (\p -> (abs p) < 1000) (1:primes)
+  let as = map (\n -> (-n)) asn ++ [0] ++ asn
+  let bs = reverse $ filter (\p -> (abs p) < 1000) (0:1:primes)
+  let r = calcForAs isPrimeFunc as bs Solution {len = 40, a = 1, b = 41}
+
+  print ("Expected: " ++ show (-59231 :: Integer) ++ ", actual: " ++ show (mulAB r))

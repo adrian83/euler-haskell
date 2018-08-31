@@ -6,5 +6,5 @@ Solutions to few programming exercises from [Project Euler](https://projecteuler
 `$ runhaskell <file.hs>`
 
 #### Refactoring needed: 27
-#### Optimization needed: 27
-#### Not working: 27
+#### Optimization needed:
+#### Not working:
