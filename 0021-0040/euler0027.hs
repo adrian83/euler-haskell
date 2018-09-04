@@ -43,7 +43,6 @@ isPrime primes number
 possiblePrime :: Integer -> Bool
 possiblePrime n = n > 0 && ((elem n [0,1,2,3,5,7,11,13,17,19,23,29,31]) || (all (\h -> n `mod` h /= 0) [2,3,5,7,11,13,17,19,23,29,31]))
 
-
 calculate :: Integer -> Integer -> Integer -> Integer
 calculate a b n = (n^2) + (a * n) + b
 
@@ -62,7 +61,6 @@ splitToPossiblePrimeSlices (n:numbs) acc accLen maxx
     where
         prime = possiblePrime n
 
-
 maxSolution :: [(Integer, [Integer])] -> (Integer -> Bool) -> Integer -> Integer -> Solution -> Solution
 maxSolution [] _ _ _ best = best
 maxSolution (sliceTuple:tuples) isPrime a b best = maxSolution tuples isPrime a b newBest
@@ -70,7 +68,6 @@ maxSolution (sliceTuple:tuples) isPrime a b best = maxSolution tuples isPrime a 
         newBest = if (fst sliceTuple) < len best
             then best
             else max Solution {len = (longest isPrime (snd sliceTuple) 0 (len best)), a = a, b = b} best
-
 
 calcForAB :: (Integer -> Bool) -> Integer -> Integer -> Solution -> Solution
 calcForAB isPrime a b best = newLongest
@@ -85,31 +82,27 @@ calcForBs isPrime a (b:bs) best = calcForBs isPrime a bs this
     where
         this = calcForAB isPrime a b best
 
-calcForA :: (Integer -> Bool) -> Integer -> [Integer] -> Solution -> Solution
-calcForA isPrime a bs best = sol
-    where
-        sol = calcForBs isPrime a bs best
-
 calcForAs :: (Integer -> Bool) -> [Integer] -> [Integer] -> Solution -> Solution
 calcForAs _ [] bs best = best
 calcForAs isPrime (a:as) bs best = calcForAs isPrime as bs sol
     where
-        sol = calcForA isPrime a bs best
+        sol = calcForBs isPrime a bs best
 
 
 main :: IO ()
 main = do
   let maxN = 100
-  let maxPrime = (maxN^2) + (1000*maxN) + 1000
+  let maxA = 999
+  let maxB = 1000
+  let maxPrime = (maxN ^ 2) + (maxA * maxN) + maxB
+
   f <- readFile "../primes/primes"
-  let primes = filter (\n -> n <= maxPrime) [read s :: Integer | s <- lines f]
+  let primes = filter (<= maxPrime) [read s :: Integer | s <- lines f]
   let isPrimeFunc = isPrime primes
 
-
-
-  let asn = filter (\p -> (abs p) < 1000) (1:primes)
-  let as = map (\n -> (-n)) asn ++ [0] ++ asn
+  let asn = filter (\p -> (abs p) <= maxA) (1:primes)
+  let as = map negate asn ++ [0] ++ asn
   let bs = reverse $ filter (\p -> (abs p) < 1000) (0:1:primes)
-  let r = calcForAs isPrimeFunc as bs Solution {len = 40, a = 1, b = 41}
+  let solution = calcForAs isPrimeFunc as bs Solution {len = 40, a = 1, b = 41}
 
-  print ("Expected: " ++ show (-59231 :: Integer) ++ ", actual: " ++ show (mulAB r))
+  print ("Expected: " ++ show (-59231 :: Integer) ++ ", actual: " ++ show (mulAB solution))
